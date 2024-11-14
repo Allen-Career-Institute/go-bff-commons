@@ -8,6 +8,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 )
@@ -31,7 +32,7 @@ func TestReadValidationError(t *testing.T) {
 		},
 	}
 
-	c := &config.Config{Logger: config.Logger{Level: "info"}}
+	c := &config.CommonConfig{Logger: config.Logger{Level: "info"}}
 	log := logger.NewAPILogger(c)
 
 	log.InitLogger()

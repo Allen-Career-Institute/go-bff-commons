@@ -13,7 +13,7 @@ import (
 
 func TestNewEchoUtil(t *testing.T) {
 	// Define test cases
-	d := &config.Config{Logger: config.Logger{Level: "info"}}
+	d := &config.CommonConfig{Logger: config.Logger{Level: "info"}}
 	log := logger.NewAPILogger(d)
 	log.InitLogger()
 	testCases := []struct {
@@ -52,7 +52,7 @@ func TestEchoUtil_CloneContext(t *testing.T) {
 	c := e.NewContext(req, res)
 
 	// Initialize EchoUtil
-	d := &config.Config{Logger: config.Logger{Level: "info"}}
+	d := &config.CommonConfig{Logger: config.Logger{Level: "info"}}
 	log := logger.NewAPILogger(d)
 	log.InitLogger()
 	ec := NewEchoUtil(log)
@@ -80,7 +80,7 @@ func TestEchoUtil_CloneContext(t *testing.T) {
 }
 
 func TestEchoUtil_setClaimKey(t *testing.T) {
-	d := &config.Config{Logger: config.Logger{Level: "info"}}
+	d := &config.CommonConfig{Logger: config.Logger{Level: "info"}}
 	log := logger.NewAPILogger(d)
 	log.InitLogger()
 
@@ -111,7 +111,7 @@ func TestEchoUtil_setClaimKey(t *testing.T) {
 }
 
 func TestEchoUtil_initClaimKeys(t *testing.T) {
-	d := &config.Config{Logger: config.Logger{Level: "info"}}
+	d := &config.CommonConfig{Logger: config.Logger{Level: "info"}}
 	log := logger.NewAPILogger(d)
 	log.InitLogger()
 

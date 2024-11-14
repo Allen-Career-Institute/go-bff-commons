@@ -39,13 +39,13 @@ type Logger interface {
 
 // ApiLogger Logger
 type APILogger struct {
-	cfg         *config.Config
+	cfg         *config.CommonConfig
 	sugarLogger *zap.SugaredLogger
 	ctx         echo.Context
 }
 
 // NewAPILogger App Logger constructor
-func NewAPILogger(cfg *config.Config) *APILogger {
+func NewAPILogger(cfg *config.CommonConfig) *APILogger {
 	return &APILogger{cfg: cfg}
 }
 
@@ -62,7 +62,7 @@ func GetLoggerLevelMap() map[string]zapcore.Level {
 	}
 }
 
-func (*APILogger) getLoggerLevel(cfg *config.Config) zapcore.Level {
+func (*APILogger) getLoggerLevel(cfg *config.CommonConfig) zapcore.Level {
 	level, exist := GetLoggerLevelMap()[cfg.Logger.Level]
 	if !exist {
 		return zapcore.DebugLevel

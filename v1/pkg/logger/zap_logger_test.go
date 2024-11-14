@@ -17,7 +17,7 @@ import (
 func TestNewAPILogger(t *testing.T) {
 	tests := []struct {
 		name string
-		cfg  *config.Config
+		cfg  *config.CommonConfig
 		want *APILogger
 	}{
 		{
@@ -27,8 +27,8 @@ func TestNewAPILogger(t *testing.T) {
 		},
 		{
 			name: "Test with non-nil config",
-			cfg:  &config.Config{Logger: config.Logger{Level: "debug"}},
-			want: &APILogger{cfg: &config.Config{Logger: config.Logger{Level: "debug"}}},
+			cfg:  &config.CommonConfig{Logger: config.Logger{Level: "debug"}},
+			want: &APILogger{cfg: &config.CommonConfig{Logger: config.Logger{Level: "debug"}}},
 		},
 	}
 
@@ -70,32 +70,32 @@ func TestGetLoggerLevelMap(t *testing.T) {
 func TestAPILogger_getLoggerLevel(t *testing.T) {
 	tests := []struct {
 		name string
-		cfg  *config.Config
+		cfg  *config.CommonConfig
 		want zapcore.Level
 	}{
 		{
 			name: "Test with debug level",
-			cfg:  &config.Config{Logger: config.Logger{Level: "debug"}},
+			cfg:  &config.CommonConfig{Logger: config.Logger{Level: "debug"}},
 			want: zapcore.DebugLevel,
 		},
 		{
 			name: "Test with info level",
-			cfg:  &config.Config{Logger: config.Logger{Level: "info"}},
+			cfg:  &config.CommonConfig{Logger: config.Logger{Level: "info"}},
 			want: zapcore.InfoLevel,
 		},
 		{
 			name: "Test with warn level",
-			cfg:  &config.Config{Logger: config.Logger{Level: "warn"}},
+			cfg:  &config.CommonConfig{Logger: config.Logger{Level: "warn"}},
 			want: zapcore.WarnLevel,
 		},
 		{
 			name: "Test with error level",
-			cfg:  &config.Config{Logger: config.Logger{Level: "error"}},
+			cfg:  &config.CommonConfig{Logger: config.Logger{Level: "error"}},
 			want: zapcore.ErrorLevel,
 		},
 		{
 			name: "Test with non-existent level",
-			cfg:  &config.Config{Logger: config.Logger{Level: "non-existent"}},
+			cfg:  &config.CommonConfig{Logger: config.Logger{Level: "non-existent"}},
 			want: zapcore.DebugLevel,
 		},
 	}
@@ -146,17 +146,17 @@ func TestAPILogger_getLoggerLevel(t *testing.T) {
 func TestAPILogger_InitLogger(t *testing.T) {
 	tests := []struct {
 		name     string
-		cfg      *config.Config
+		cfg      *config.CommonConfig
 		wantLogs []observer.LoggedEntry
 	}{
 		{
 			name:     "Test with console encoding",
-			cfg:      &config.Config{Logger: config.Logger{Level: "debug", Encoding: "console"}},
+			cfg:      &config.CommonConfig{Logger: config.Logger{Level: "debug", Encoding: "console"}},
 			wantLogs: []observer.LoggedEntry{},
 		},
 		{
 			name:     "Test with json encoding",
-			cfg:      &config.Config{Logger: config.Logger{Level: "debug", Encoding: "json"}},
+			cfg:      &config.CommonConfig{Logger: config.Logger{Level: "debug", Encoding: "json"}},
 			wantLogs: []observer.LoggedEntry{},
 		},
 	}
@@ -248,7 +248,7 @@ func TestAPILogger_Debug(t *testing.T) {
 			logger := zap.New(core)
 
 			apiLogger := &APILogger{
-				cfg:         &config.Config{},
+				cfg:         &config.CommonConfig{},
 				sugarLogger: logger.Sugar(),
 			}
 
@@ -292,7 +292,7 @@ func TestAPILogger_Debugf(t *testing.T) {
 			logger := zap.New(core)
 
 			apiLogger := &APILogger{
-				cfg:         &config.Config{},
+				cfg:         &config.CommonConfig{},
 				sugarLogger: logger.Sugar(),
 			}
 
@@ -443,7 +443,7 @@ func TestAPILogger_Infof(t *testing.T) {
 			logger := zap.New(core)
 
 			apiLogger := &APILogger{
-				cfg:         &config.Config{},
+				cfg:         &config.CommonConfig{},
 				sugarLogger: logger.Sugar(),
 				ctx:         tt.ctx,
 			}
@@ -581,7 +581,7 @@ func TestAPILogger_Warnf(t *testing.T) {
 			logger := zap.New(core)
 
 			apiLogger := &APILogger{
-				cfg:         &config.Config{},
+				cfg:         &config.CommonConfig{},
 				sugarLogger: logger.Sugar(),
 				ctx:         tt.ctx,
 			}
@@ -703,7 +703,7 @@ func TestAPILogger_Errorf(t *testing.T) {
 			ctx := tt.init()
 
 			apiLogger := &APILogger{
-				cfg:         &config.Config{},
+				cfg:         &config.CommonConfig{},
 				sugarLogger: logger.Sugar(),
 				ctx:         ctx,
 			}
@@ -750,7 +750,7 @@ func TestAPILogger_Errorw(t *testing.T) {
 			logger := zap.New(core)
 
 			apiLogger := &APILogger{
-				cfg:         &config.Config{},
+				cfg:         &config.CommonConfig{},
 				sugarLogger: logger.Sugar(),
 			}
 
@@ -839,7 +839,7 @@ func TestAPILogger_Panic(t *testing.T) {
 			logger := zap.New(core)
 
 			apiLogger := &APILogger{
-				cfg:         &config.Config{},
+				cfg:         &config.CommonConfig{},
 				sugarLogger: logger.Sugar(),
 			}
 

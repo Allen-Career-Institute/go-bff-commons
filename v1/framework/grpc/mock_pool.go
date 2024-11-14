@@ -39,7 +39,7 @@ func (m *MockISafeGrpcPool) EXPECT() *MockISafeGrpcPoolMockRecorder {
 }
 
 // CreateConnectionForClient mocks base method.
-func (m *MockISafeGrpcPool) CreateConnectionForClient(ctx echo.Context, log logger.Logger, client string, cfg *config.Config, meter metric.Meter) (*grpc.ClientConn, error) {
+func (m *MockISafeGrpcPool) CreateConnectionForClient(ctx echo.Context, log logger.Logger, client string, cfg *config.CommonConfig, meter metric.Meter) (*grpc.ClientConn, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateConnectionForClient", ctx, log, client, cfg, meter)
 	ret0, _ := ret[0].(*grpc.ClientConn)

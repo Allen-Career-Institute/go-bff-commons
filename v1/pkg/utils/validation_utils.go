@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/Allen-Career-Institute/go-bff-commons/v1/pkg/logger"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 )
 

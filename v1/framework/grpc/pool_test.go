@@ -21,13 +21,13 @@ import (
 	"time"
 )
 
-func getTestingParams(t *testing.T) (*gomock.Controller, *config.Config, *echo.Echo, logger.Logger,
+func getTestingParams(t *testing.T) (*gomock.Controller, *config.CommonConfig, *echo.Echo, logger.Logger,
 	metric.Meter, echo.Context, *http.Request) {
 	ctrl := gomock.NewController(t)
 
 	e := echo.New()
 
-	c := &config.Config{Logger: config.Logger{Level: "info"}}
+	c := &config.CommonConfig{Logger: config.Logger{Level: "info"}}
 	log := logger.NewAPILogger(c)
 	log.InitLogger()
 	m := otel.Meter("pool-test")
@@ -47,7 +47,7 @@ func TestCreateClientConnection(t *testing.T) {
 		ctx    echo.Context
 		log    logger.Logger
 		client string
-		cfg    *config.Config
+		cfg    *config.CommonConfig
 	}
 
 	tests := []struct {
@@ -126,7 +126,7 @@ func Test_initCircuitBreaker(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockContext := echo.New().NewContext(nil, nil)
-	mockLogger := logger.NewAPILogger(&config.Config{Logger: config.Logger{Level: "info"}})
+	mockLogger := logger.NewAPILogger(&config.CommonConfig{Logger: config.Logger{Level: "info"}})
 	mockLogger.InitLogger()
 	_, _, _, _, m, _, _ := getTestingParams(t)
 

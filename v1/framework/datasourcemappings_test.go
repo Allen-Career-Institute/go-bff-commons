@@ -71,7 +71,7 @@ func getLogger() *logger.APILogger {
 	return appLogger
 }
 
-func getConfig() config.Config {
-	cfg := &config.Config{}
+func getConfig() config.CommonConfig {
+	cfg := &config.CommonConfig{}
 	return *cfg
 }

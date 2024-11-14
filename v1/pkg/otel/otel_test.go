@@ -219,7 +219,7 @@ func TestInitOtelProviders(t *testing.T) {
 			}
 
 			// Create a new Handler with app name
-			h := NewHandler(&config.Config{
+			h := NewHandler(&config.CommonConfig{
 				Server: config.ServerConfig{
 					App: config.App{
 						Name: tt.appName,
@@ -242,13 +242,13 @@ func TestNewHandler(t *testing.T) {
 
 	tests := []struct {
 		name        string
-		config      *config.Config
-		expectedCnf config.Config
+		config      *config.CommonConfig
+		expectedCnf config.CommonConfig
 	}{
 		{
 			name:        "Valid config",
-			config:      &config.Config{},
-			expectedCnf: config.Config{},
+			config:      &config.CommonConfig{},
+			expectedCnf: config.CommonConfig{},
 		},
 	}
 

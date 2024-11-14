@@ -66,7 +66,7 @@ func (mr *MockDatasourceMappingsManagerMockRecorder) GetDataSourcesByNameMap() *
 }
 
 // GetSharedDS mocks base method.
-func (m *MockDatasourceMappingsManager) GetSharedDS(c echo.Context, dsName string, cnf *config.Config) *commons.DSResponse {
+func (m *MockDatasourceMappingsManager) GetSharedDS(c echo.Context, dsName string, cnf *config.CommonConfig) *commons.DSResponse {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetSharedDS", c, dsName, cnf)
 	ret0, _ := ret[0].(*commons.DSResponse)

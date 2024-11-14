@@ -12,5 +12,5 @@ type DatasourceMappingsManager interface {
 	RegisterDataSource(ds *framework.DataSource) bool
 	GetDataSourceByName(name string) *framework.DataSource
 	GetDataSourcesByNameMap() map[string]*framework.DataSource
-	GetSharedDS(c echo.Context, dsName string, cnf *config.Config) *models.DSResponse
+	GetSharedDS(c echo.Context, dsName string, cnf *config.CommonConfig) *models.DSResponse
 }

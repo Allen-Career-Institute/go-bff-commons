@@ -36,7 +36,7 @@ func Test_addCounter(t *testing.T) {
 				}
 			}()
 
-			c := &config.Config{Logger: config.Logger{Level: "info"}}
+			c := &config.CommonConfig{Logger: config.Logger{Level: "info"}}
 			log := logger.NewAPILogger(c)
 			log.InitLogger()
 
@@ -136,7 +136,7 @@ func TestNewCustomMetrics(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			c := &config.Config{Logger: config.Logger{Level: "info"}}
+			c := &config.CommonConfig{Logger: config.Logger{Level: "info"}}
 			log := logger.NewAPILogger(c)
 			log.InitLogger()
 

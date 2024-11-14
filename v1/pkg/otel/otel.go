@@ -25,11 +25,11 @@ import (
 )
 
 type Handler struct {
-	Cnf config.Config
+	Cnf config.CommonConfig
 	log logger.Logger
 }
 
-func NewHandler(cnf *config.Config, log logger.Logger) *Handler {
+func NewHandler(cnf *config.CommonConfig, log logger.Logger) *Handler {
 	return &Handler{Cnf: *cnf, log: log}
 }
 

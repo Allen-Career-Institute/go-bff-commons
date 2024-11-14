@@ -44,7 +44,7 @@ func (dm *DataSourceMappings) GetDataSourcesByNameMap() map[string]*framework.Da
 	return dm.nameToDS
 }
 
-func (dm *DataSourceMappings) GetSharedDS(c echo.Context, dsName string, cnf *config.Config) *models.DSResponse {
+func (dm *DataSourceMappings) GetSharedDS(c echo.Context, dsName string, cnf *config.CommonConfig) *models.DSResponse {
 	dm.logger.WithContext(c).Infof("fetching %v data from shared data", dsName)
 
 	var data *models.DSResponse

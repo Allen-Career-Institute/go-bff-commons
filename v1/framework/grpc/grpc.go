@@ -30,7 +30,7 @@ var (
 )
 
 // GetConn returns the grpc connection if already present for a particular client or will initialize a new connection
-func (handler *Handler) GetConn(ctx echo.Context, log logger.Logger, client string, cnf *config.Config) (grpc.ClientConnInterface, error) {
+func (handler *Handler) GetConn(ctx echo.Context, log logger.Logger, client string, cnf *config.CommonConfig) (grpc.ClientConnInterface, error) {
 	var (
 		err  error
 		conn *grpc.ClientConn
@@ -70,7 +70,7 @@ func getOrCreateMutex(client string) *sync.Mutex {
 	return poolMutexes[client]
 }
 
-func createClientConnection(ctx echo.Context, log logger.Logger, client string, cnf *config.Config, handler *Handler) (*grpc.ClientConn, error) {
+func createClientConnection(ctx echo.Context, log logger.Logger, client string, cnf *config.CommonConfig, handler *Handler) (*grpc.ClientConn, error) {
 	conn, err := handler.safeGrpcConnections.CreateConnectionForClient(ctx, log, client, cnf, handler.meter)
 	if err != nil {
 		return nil, err

@@ -38,7 +38,7 @@ func (m *MockManager) EXPECT() *MockManagerMockRecorder {
 }
 
 // GetConn mocks base method.
-func (m *MockManager) GetConn(ctx echo.Context, log logger.Logger, client string, cnf *config.Config) (grpc.ClientConnInterface, error) {
+func (m *MockManager) GetConn(ctx echo.Context, log logger.Logger, client string, cnf *config.CommonConfig) (grpc.ClientConnInterface, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetConn", ctx, log, client, cnf)
 	ret0, _ := ret[0].(grpc.ClientConnInterface)

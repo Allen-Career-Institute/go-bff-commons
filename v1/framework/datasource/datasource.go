@@ -5,7 +5,7 @@ import (
 	"github.com/labstack/echo/v4"
 
 	"github.com/Allen-Career-Institute/go-bff-commons/v1/config"
-	models "github.com/Allen-Career-Institute/go-bff-commons/v1/framework/models"
+	"github.com/Allen-Career-Institute/go-bff-commons/v1/framework/models"
 	"github.com/Allen-Career-Institute/go-bff-commons/v1/pkg/utils"
 )
 
@@ -29,7 +29,7 @@ type (
 	HandlerFunc func(ctx echo.Context, cnf *config.Config) (models.DSResponse, error)
 )
 
-func CreateNewDataSource(dsConf *config.DataSourceConfig, handler HandlerFunc, m ...Filter) (ds *DataSource) {
+func CreateNewDataSource(dsConf models.DataSourceConfig, handler HandlerFunc, m ...Filter) (ds *DataSource) {
 	resource := types.ResourceTypes_RESOURCE_UNSPECIFIED
 
 	if dsConf.Resource != "" {
@@ -68,7 +68,7 @@ func CreateNewDataSource(dsConf *config.DataSourceConfig, handler HandlerFunc, m
 }
 
 func addFilters(filter ...Filter) []Filter {
-	filters := []Filter{}
+	var filters []Filter
 	for i := len(filter) - 1; i >= 0; i-- {
 		filters = append(filters, filter[i])
 	}

@@ -67,21 +67,6 @@ type GoPool struct {
 	MaxConcurrentRoutines uint32
 }
 
-type SchedulingServiceConfig struct {
-	FetchSchedulesDS        DataSourceConfig
-	FetchSchedulesSummaryDS DataSourceConfig
-}
-
-type DataSourceConfig struct {
-	URI       string
-	Method    string
-	Timeout   time.Duration
-	DsName    string
-	Resource  string
-	Action    string
-	PreloadDS []string
-}
-
 // ServerConfig Server config struct
 type ServerConfig struct {
 	Port                        string

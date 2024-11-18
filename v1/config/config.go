@@ -573,32 +573,3 @@ func readJwtSecret(location string) (string, error) {
 
 	return jwtSecret, nil
 }
-
-func GetTemporalClientConfig(client, service string, cnf *Config) ClientConfig {
-	if cnf.DynamicConfig == nil {
-		v := viper.New()
-		v.SetConfigType(FileType)
-		v.AddConfigPath(getConfigDirectory())
-		v.SetConfigName(LocalConfigName)
-
-		if err := v.ReadInConfig(); err != nil {
-			log.Errorf(ReadConfigErrorLog, client, err.Error())
-		}
-
-		namespace := v.GetString(join(client, ".", service, NamespaceSuffix))
-
-		return ClientConfig{Endpoint: v.GetString(join(client, EndPointSuffix)), Namespace: namespace}
-	}
-	// Reading from aws App Config
-	namespace, err := cnf.DynamicConfig.Get(fmt.Sprintf("%s%s%s%s", client, ".", service, NamespaceSuffix))
-	if err != nil {
-		log.Errorf("error fetching conn aws config for client: %v ,Error: %v", client, err.Error())
-	}
-
-	endpoint, err := cnf.DynamicConfig.Get(client + EndPointSuffix)
-	if err != nil {
-		log.Errorf("error fetching endpoint aws config for client: %v ,Error: %v", client, err.Error())
-	}
-
-	return ClientConfig{Endpoint: endpoint, Namespace: namespace}
-}

@@ -4,13 +4,6 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
-type DSResponse struct {
-	Status   int         `json:"status" validate:"required,lte=30"`
-	Reason   string      `json:"reason" validate:"required,lte=30"`
-	ViewType string      `json:"-"`
-	Data     interface{} `json:"data"`
-}
-
 type Icon struct {
 	IconURI    string `json:"icon_uri"`
 	ButtonType string `json:"button_type"`

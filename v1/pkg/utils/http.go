@@ -1,9 +1,9 @@
 package utils
 
 import (
-	"bff-service/internal/datasources"
-	"bff-service/internal/models/commons"
 	"context"
+	"github.com/Allen-Career-Institute/go-bff-commons/v1/framework/models"
+	"github.com/Allen-Career-Institute/go-bff-commons/v1/intrnl/datasources"
 	"net/http"
 	"strings"
 	"time"
@@ -15,7 +15,7 @@ import (
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 
-	"bff-service/pkg/logger"
+	"github.com/Allen-Career-Institute/go-bff-commons/v1/pkg/logger"
 )
 
 // GetRequestID Get request id from echo context
@@ -188,7 +188,7 @@ func GetHeader(ctx echo.Context, name string) string {
 	return EmptyString
 }
 
-func HandleErrorAndConvertResponse(errorResponse error) (commons.DSResponse, error) {
+func HandleErrorAndConvertResponse(errorResponse error) (models.DSResponse, error) {
 	e, _ := status.FromError(errorResponse)
 	errMessage := e.Message()
 	respCode := GetHTTPStatusCode(e.Code())

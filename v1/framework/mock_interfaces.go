@@ -5,9 +5,9 @@
 package framework
 
 import (
-	config "bff-service/config"
-	datasource "bff-service/framework/datasource"
-	commons "bff-service/intrnl/models/commons"
+	config "github.com/Allen-Career-Institute/go-bff-commons/v1/config"
+	datasource "github.com/Allen-Career-Institute/go-bff-commons/v1/framework/datasource"
+	models "github.com/Allen-Career-Institute/go-bff-commons/v1/framework/models"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
@@ -66,10 +66,10 @@ func (mr *MockDatasourceMappingsManagerMockRecorder) GetDataSourcesByNameMap() *
 }
 
 // GetSharedDS mocks base method.
-func (m *MockDatasourceMappingsManager) GetSharedDS(c echo.Context, dsName string, cnf *config.Config) *commons.DSResponse {
+func (m *MockDatasourceMappingsManager) GetSharedDS(c echo.Context, dsName string, cnf *config.Config) *models.DSResponse {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetSharedDS", c, dsName, cnf)
-	ret0, _ := ret[0].(*commons.DSResponse)
+	ret0, _ := ret[0].(*models.DSResponse)
 	return ret0
 }
 

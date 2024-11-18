@@ -1,8 +1,8 @@
 package utils
 
 import (
-	"bff-service/pkg/logger"
 	"fmt"
+	"github.com/Allen-Career-Institute/go-bff-commons/v1/pkg/logger"
 	"io"
 
 	"github.com/Allen-Career-Institute/go-kratos-commons/utils/excel"

@@ -1,6 +1,6 @@
 module github.com/Allen-Career-Institute/go-bff-commons
 
-go 1.23.1
+go 1.22.7
 
 require (
 	github.com/Allen-Career-Institute/common-protos v1.11.45

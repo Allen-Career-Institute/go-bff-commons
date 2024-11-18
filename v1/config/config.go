@@ -3,14 +3,14 @@ package config
 import (
 	"encoding/json"
 	"fmt"
+	commonmodels "github.com/Allen-Career-Institute/go-bff-commons/v1/internal/commons"
+	dc "github.com/Allen-Career-Institute/go-kratos-commons/dynamicconfig/v1"
+	"github.com/labstack/gommon/log"
+	"github.com/spf13/viper"
 	"os"
 	"strconv"
 	"strings"
 	"time"
-
-	dc "github.com/Allen-Career-Institute/go-kratos-commons/dynamicconfig/v1"
-	"github.com/labstack/gommon/log"
-	"github.com/spf13/viper"
 )
 
 // Config App config struct
@@ -116,65 +116,65 @@ type AppConfig struct {
 }
 
 // LoadConfig Load config file from given path
-//func LoadConfig() (*Config, error) {
-//	var config Config
-//
-//	v := viper.New()
-//	v.AutomaticEnv()
-//	v.AddConfigPath(getConfigDirectory())
-//
-//	if err := loadSubConfig(v, &config, "server"); err != nil {
-//		return nil, err
-//	}
-//
-//	if err := loadSubConfig(v, &config.DataSource, "datasource"); err != nil {
-//		return nil, err
-//	}
-//
-//	if os.Getenv("ENV") != "" {
-//		setJwtSecretConfig(&config)
-//		setEncryptionKeys(&config)
-//	}
-//
-//	return &config, nil
-//}
+func LoadConfig() (*Config, error) {
+	var config Config
 
-//func setEncryptionKeys(config *Config) {
-//	aesEncryptionKey, aesSecretIV, err := readAesEncryptionSecrets(config.Server.AesEncryptionSecretLocation)
-//	if err != nil {
-//		fmt.Printf("Error reading EncryptionKeys %v", err)
-//	}
-//
-//	if aesEncryptionKey != "" {
-//		config.Server.AesEncryptionKey = aesEncryptionKey
-//
-//		log.Info("successfully retrieved aesEncryptionKey")
-//	}
-//
-//	if aesSecretIV != "" {
-//		config.Server.AesSecretIV = aesSecretIV
-//
-//		log.Info("successfully retrieved aesSecretIV")
-//	}
-//}
+	v := viper.New()
+	v.AutomaticEnv()
+	v.AddConfigPath(getConfigDirectory())
 
-//func readAesEncryptionSecrets(location string) (secretKey, encryptionIV string, err error) {
-//	byteValue, err := os.ReadFile(location)
-//	if err != nil {
-//		fmt.Printf("Error reading aesEncryptionSecrets %v", err)
-//		return "", "", err
-//	}
-//
-//	var aesEncryptionSecrets commonmodels.AesEncryptionSecrets
-//
-//	err = json.Unmarshal(byteValue, &aesEncryptionSecrets)
-//	if err != nil {
-//		fmt.Printf("error while unmarshalling %v", err)
-//		return "", "", err
-//	}
-//
-//	return aesEncryptionSecrets.EncryptionSecretKey, aesEncryptionSecrets.EncryptionIv, nil
-//}
+	if err := loadSubConfig(v, &config, "server"); err != nil {
+		return nil, err
+	}
+
+	if err := loadSubConfig(v, &config.DataSource, "datasource"); err != nil {
+		return nil, err
+	}
+
+	if os.Getenv("ENV") != "" {
+		setJwtSecretConfig(&config)
+		setEncryptionKeys(&config)
+	}
+
+	return &config, nil
+}
+
+func setEncryptionKeys(config *Config) {
+	aesEncryptionKey, aesSecretIV, err := readAesEncryptionSecrets(config.Server.AesEncryptionSecretLocation)
+	if err != nil {
+		fmt.Printf("Error reading EncryptionKeys %v", err)
+	}
+
+	if aesEncryptionKey != "" {
+		config.Server.AesEncryptionKey = aesEncryptionKey
+
+		log.Info("successfully retrieved aesEncryptionKey")
+	}
+
+	if aesSecretIV != "" {
+		config.Server.AesSecretIV = aesSecretIV
+
+		log.Info("successfully retrieved aesSecretIV")
+	}
+}
+
+func readAesEncryptionSecrets(location string) (secretKey, encryptionIV string, err error) {
+	byteValue, err := os.ReadFile(location)
+	if err != nil {
+		fmt.Printf("Error reading aesEncryptionSecrets %v", err)
+		return "", "", err
+	}
+
+	var aesEncryptionSecrets commonmodels.AesEncryptionSecrets
+
+	err = json.Unmarshal(byteValue, &aesEncryptionSecrets)
+	if err != nil {
+		fmt.Printf("error while unmarshalling %v", err)
+		return "", "", err
+	}
+
+	return aesEncryptionSecrets.EncryptionSecretKey, aesEncryptionSecrets.EncryptionIv, nil
+}
 
 func getConfigDirectory() string {
 	var dir string

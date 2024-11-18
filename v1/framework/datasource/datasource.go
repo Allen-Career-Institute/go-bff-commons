@@ -29,7 +29,7 @@ type (
 	HandlerFunc func(ctx echo.Context, cnf *config.Config) (models.DSResponse, error)
 )
 
-func CreateNewDataSource(dsConf models.DataSourceConfig, handler HandlerFunc, m ...Filter) (ds *DataSource) {
+func CreateNewDataSource(dsConf *models.DataSourceConfig, handler HandlerFunc, m ...Filter) (ds *DataSource) {
 	resource := types.ResourceTypes_RESOURCE_UNSPECIFIED
 
 	if dsConf.Resource != "" {

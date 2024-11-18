@@ -10,7 +10,7 @@ import (
 	"github.com/labstack/echo/v4"
 
 	"bff-service/internal/datasources"
-	commonmodels "bff-service/internal/models/commons"
+	commonmodels "bff-service/intrnl/models/commons"
 	"bff-service/pkg/logger"
 )
 

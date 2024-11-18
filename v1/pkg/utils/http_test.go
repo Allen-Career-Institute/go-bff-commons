@@ -100,10 +100,10 @@ func TestHandleError(t *testing.T) {
 		expectedMessage string
 	}{
 		{
-			name:            "Test HandleError with internal server error",
-			err:             errors.New("internal server error"),
+			name:            "Test HandleError with intrnl server error",
+			err:             errors.New("intrnl server error"),
 			expectedCode:    http.StatusInternalServerError,
-			expectedMessage: "internal server error",
+			expectedMessage: "intrnl server error",
 		},
 		{
 			name:            "Test HandleError with not found error",

@@ -7,7 +7,7 @@ package framework
 import (
 	config "bff-service/config"
 	datasource "bff-service/framework/datasource"
-	commons "bff-service/internal/models/commons"
+	commons "bff-service/intrnl/models/commons"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"

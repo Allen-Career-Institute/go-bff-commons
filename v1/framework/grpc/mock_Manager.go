@@ -20,15 +20,15 @@ type MockManager1 struct {
 }
 
 // GetConn provides a mock function with given fields: ctx, log, client, cnf
-func (_m *MockManager1) GetConn(ctx echo.Context, log logger.Logger, client string, cnf *config.CommonConfig) (google_golang_orggrpc.ClientConnInterface, error) {
+func (_m *MockManager1) GetConn(ctx echo.Context, log logger.Logger, client string, cnf *config.Config) (google_golang_orggrpc.ClientConnInterface, error) {
 	ret := _m.Called(ctx, log, client, cnf)
 
 	var r0 google_golang_orggrpc.ClientConnInterface
 	var r1 error
-	if rf, ok := ret.Get(0).(func(echo.Context, logger.Logger, string, *config.CommonConfig) (google_golang_orggrpc.ClientConnInterface, error)); ok {
+	if rf, ok := ret.Get(0).(func(echo.Context, logger.Logger, string, *config.Config) (google_golang_orggrpc.ClientConnInterface, error)); ok {
 		return rf(ctx, log, client, cnf)
 	}
-	if rf, ok := ret.Get(0).(func(echo.Context, logger.Logger, string, *config.CommonConfig) google_golang_orggrpc.ClientConnInterface); ok {
+	if rf, ok := ret.Get(0).(func(echo.Context, logger.Logger, string, *config.Config) google_golang_orggrpc.ClientConnInterface); ok {
 		r0 = rf(ctx, log, client, cnf)
 	} else {
 		if ret.Get(0) != nil {
@@ -36,7 +36,7 @@ func (_m *MockManager1) GetConn(ctx echo.Context, log logger.Logger, client stri
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(echo.Context, logger.Logger, string, *config.CommonConfig) error); ok {
+	if rf, ok := ret.Get(1).(func(echo.Context, logger.Logger, string, *config.Config) error); ok {
 		r1 = rf(ctx, log, client, cnf)
 	} else {
 		r1 = ret.Error(1)

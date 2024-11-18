@@ -33,7 +33,7 @@ const (
 type ISafeGrpcConnections interface {
 	GetConnectionForClient(client string) (*grpc.ClientConn, bool)
 	SetConnectionForClient(client string, conn *grpc.ClientConn)
-	CreateConnectionForClient(ctx echo.Context, log logger.Logger, client string, cfg *config.CommonConfig, meter metric.Meter) (*grpc.ClientConn, error)
+	CreateConnectionForClient(ctx echo.Context, log logger.Logger, client string, cfg *config.Config, meter metric.Meter) (*grpc.ClientConn, error)
 }
 
 type SafeGrpcConnections struct {
@@ -55,7 +55,7 @@ func (safeGrpcConnections *SafeGrpcConnections) SetConnectionForClient(client st
 	safeGrpcConnections.clientConnections[client] = conn
 }
 
-func (*SafeGrpcConnections) CreateConnectionForClient(ctx echo.Context, log logger.Logger, client string, cfg *config.CommonConfig, meter metric.Meter) (*grpc.ClientConn, error) {
+func (*SafeGrpcConnections) CreateConnectionForClient(ctx echo.Context, log logger.Logger, client string, cfg *config.Config, meter metric.Meter) (*grpc.ClientConn, error) {
 	conf := config.GetClientConfigs(client, cfg)
 
 	svcCircuitBreakerConfig := config.GetCircuitBreakerClientConfigs(client, cfg)

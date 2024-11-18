@@ -17,7 +17,7 @@ func TestGetCircuitBreakerClientConfigs(t *testing.T) {
 	// Define arguments struct for the test cases
 	type args struct {
 		client string
-		cnf    *CommonConfig
+		cnf    *Config
 	}
 
 	// Define test cases
@@ -31,7 +31,7 @@ func TestGetCircuitBreakerClientConfigs(t *testing.T) {
 			name: "Local config read when DynamicConfig is nil",
 			args: args{
 				client: "test-client",
-				cnf:    &CommonConfig{DynamicConfig: nil},
+				cnf:    &Config{DynamicConfig: nil},
 			},
 			want: CircuitBreakerClientConfig{
 				FailurePercentageThresholdWithinTimePeriod:   DefaultCircuitBreakerPercentageThreshold,
@@ -45,10 +45,10 @@ func TestGetCircuitBreakerClientConfigs(t *testing.T) {
 			},
 		},
 		{
-			name: "Dynamic config read from AWS App CommonConfig",
+			name: "Dynamic config read from AWS App Config",
 			args: args{
 				client: "test-client",
-				cnf:    &CommonConfig{DynamicConfig: dc},
+				cnf:    &Config{DynamicConfig: dc},
 			},
 			want: CircuitBreakerClientConfig{
 				FailurePercentageThresholdWithinTimePeriod:   50,
@@ -69,7 +69,7 @@ func TestGetCircuitBreakerClientConfigs(t *testing.T) {
 			name: "Dynamic config with parsing errors",
 			args: args{
 				client: "test-client",
-				cnf:    &CommonConfig{DynamicConfig: dc},
+				cnf:    &Config{DynamicConfig: dc},
 			},
 			want: CircuitBreakerClientConfig{
 				FailurePercentageThresholdWithinTimePeriod:   DefaultCircuitBreakerPercentageThreshold,
@@ -112,7 +112,7 @@ func TestGetRetryClientConfigs(t *testing.T) {
 	// Define arguments struct for the test cases
 	type args struct {
 		client string
-		cnf    *CommonConfig
+		cnf    *Config
 	}
 
 	// Define test cases
@@ -126,7 +126,7 @@ func TestGetRetryClientConfigs(t *testing.T) {
 			name: "Local config read when DynamicConfig is nil",
 			args: args{
 				client: "test-client",
-				cnf:    &CommonConfig{DynamicConfig: nil},
+				cnf:    &Config{DynamicConfig: nil},
 			},
 			want: RetryClientConfig{
 				MaxRetries: DefaultRetryMaxRetries,
@@ -137,10 +137,10 @@ func TestGetRetryClientConfigs(t *testing.T) {
 			},
 		},
 		{
-			name: "Dynamic config read from AWS App CommonConfig",
+			name: "Dynamic config read from AWS App Config",
 			args: args{
 				client: "test-client",
-				cnf:    &CommonConfig{DynamicConfig: dc},
+				cnf:    &Config{DynamicConfig: dc},
 			},
 			want: RetryClientConfig{
 				MaxRetries: 3,
@@ -155,7 +155,7 @@ func TestGetRetryClientConfigs(t *testing.T) {
 			name: "Dynamic config with parsing errors",
 			args: args{
 				client: "test-client",
-				cnf:    &CommonConfig{DynamicConfig: dc},
+				cnf:    &Config{DynamicConfig: dc},
 			},
 			want: RetryClientConfig{
 				MaxRetries: DefaultRetryMaxRetries,

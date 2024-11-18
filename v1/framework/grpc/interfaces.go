@@ -8,5 +8,5 @@ import (
 )
 
 type Manager interface {
-	GetConn(ctx echo.Context, log logger.Logger, client string, cnf *config.CommonConfig) (googleGRPC.ClientConnInterface, error)
+	GetConn(ctx echo.Context, log logger.Logger, client string, cnf *config.Config) (googleGRPC.ClientConnInterface, error)
 }

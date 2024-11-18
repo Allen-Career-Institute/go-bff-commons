@@ -1,26 +1,30 @@
 package config
 
 import (
-	"github.com/labstack/gommon/log"
-	"github.com/spf13/viper"
+	"encoding/json"
+	"fmt"
 	"os"
 	"strconv"
 	"strings"
 	"time"
 
 	dc "github.com/Allen-Career-Institute/go-kratos-commons/dynamicconfig/v1"
+	"github.com/labstack/gommon/log"
+	"github.com/spf13/viper"
 )
 
-type IDataSource interface {
-}
-
-// CommonConfig App config struct
-type CommonConfig struct {
-	AppConfig     AppConfig
-	DynamicConfig dc.DynamicConfig
-	Logger        Logger
-	GoPool        GoPool
-	DataSource    IDataSource
+// Config App config struct
+type Config struct {
+	Server                          ServerConfig
+	AppConfig                       AppConfig
+	DynamicConfig                   dc.DynamicConfig
+	Logger                          Logger
+	GoPool                          GoPool
+	DataSource                      any
+	PlaylistFilenameConfig          PlaylistConfig
+	LmmRedisSecretLocation          string
+	AkamaiConfig                    AkamaiConfig
+	WhiteListSubTypesForContentAuth WhiteListSubTypesForContentAuth
 }
 
 // ClientConfig Internal call config struct
@@ -44,6 +48,11 @@ type RetryClientConfig struct {
 	Delay      time.Duration // delay interval between each retry
 }
 
+type PlaylistConfig struct {
+	HLSFilename  string
+	DASHFilename string
+}
+
 // Logger config
 type Logger struct {
 	Development       bool
@@ -56,6 +65,21 @@ type Logger struct {
 // DataSourceConfig Data Source config struct
 type GoPool struct {
 	MaxConcurrentRoutines uint32
+}
+
+type SchedulingServiceConfig struct {
+	FetchSchedulesDS        DataSourceConfig
+	FetchSchedulesSummaryDS DataSourceConfig
+}
+
+type DataSourceConfig struct {
+	URI       string
+	Method    string
+	Timeout   time.Duration
+	DsName    string
+	Resource  string
+	Action    string
+	PreloadDS []string
 }
 
 // ServerConfig Server config struct
@@ -71,6 +95,15 @@ type ServerConfig struct {
 	AesEncryptionSecretLocation string
 }
 
+type WhiteListSubTypesForContentAuth struct {
+	SubTypes []string
+}
+
+type AkamaiConfig struct {
+	BaseURL string
+	Key     string
+}
+
 type App struct {
 	Name    string
 	Version string
@@ -81,6 +114,117 @@ type AppConfig struct {
 	ConfigName      string
 	PollingInterval int64
 }
+
+// LoadConfig Load config file from given path
+//func LoadConfig() (*Config, error) {
+//	var config Config
+//
+//	v := viper.New()
+//	v.AutomaticEnv()
+//	v.AddConfigPath(getConfigDirectory())
+//
+//	if err := loadSubConfig(v, &config, "server"); err != nil {
+//		return nil, err
+//	}
+//
+//	if err := loadSubConfig(v, &config.DataSource, "datasource"); err != nil {
+//		return nil, err
+//	}
+//
+//	if os.Getenv("ENV") != "" {
+//		setJwtSecretConfig(&config)
+//		setEncryptionKeys(&config)
+//	}
+//
+//	return &config, nil
+//}
+
+//func setEncryptionKeys(config *Config) {
+//	aesEncryptionKey, aesSecretIV, err := readAesEncryptionSecrets(config.Server.AesEncryptionSecretLocation)
+//	if err != nil {
+//		fmt.Printf("Error reading EncryptionKeys %v", err)
+//	}
+//
+//	if aesEncryptionKey != "" {
+//		config.Server.AesEncryptionKey = aesEncryptionKey
+//
+//		log.Info("successfully retrieved aesEncryptionKey")
+//	}
+//
+//	if aesSecretIV != "" {
+//		config.Server.AesSecretIV = aesSecretIV
+//
+//		log.Info("successfully retrieved aesSecretIV")
+//	}
+//}
+
+//func readAesEncryptionSecrets(location string) (secretKey, encryptionIV string, err error) {
+//	byteValue, err := os.ReadFile(location)
+//	if err != nil {
+//		fmt.Printf("Error reading aesEncryptionSecrets %v", err)
+//		return "", "", err
+//	}
+//
+//	var aesEncryptionSecrets commonmodels.AesEncryptionSecrets
+//
+//	err = json.Unmarshal(byteValue, &aesEncryptionSecrets)
+//	if err != nil {
+//		fmt.Printf("error while unmarshalling %v", err)
+//		return "", "", err
+//	}
+//
+//	return aesEncryptionSecrets.EncryptionSecretKey, aesEncryptionSecrets.EncryptionIv, nil
+//}
+
+func getConfigDirectory() string {
+	var dir string
+
+	env := os.Getenv("ENV")
+	log.Infof("Found Env as %v", env)
+
+	if env != "" {
+		dir = "/data/conf/" + env + "/"
+		log.Infof("Found dir as %v", dir)
+	} else {
+		log.Infof("failed to get build environment, using local configs")
+
+		dir = "./config/local/"
+	}
+
+	return dir
+}
+
+func loadSubConfig(v *viper.Viper, config interface{}, name string) error {
+	v.SetConfigName(name)
+
+	if err := v.ReadInConfig(); err != nil {
+		return fmt.Errorf("error in reading %s config: %w", name, err)
+	}
+
+	return parseConfig(config, v)
+}
+
+func parseConfig(configStruct interface{}, v *viper.Viper) error {
+	err := v.Unmarshal(configStruct)
+	if err != nil {
+		log.Errorf("unable to decode into struct, %v", err.Error())
+		return err
+	}
+
+	return nil
+}
+
+const (
+	TimeoutSuffix     = ".timeout"
+	EndPointSuffix    = ".endpoint"
+	ConnTimeoutSuffix = ".conn"
+	NamespaceSuffix   = ".namespace"
+	TimeInMs          = "ms"
+	TimeInSeconds     = "s"
+	FileType          = "properties"
+	LocalConfigName   = "client"
+	JwtSecretKey      = "jwt_secret"
+)
 
 const (
 	CircuitBreakerFailurePercentageThresholdSuffix       = ".cb.failure_percentage_threshold"
@@ -108,25 +252,13 @@ const (
 )
 
 const (
-	TimeoutSuffix     = ".timeout"
-	EndPointSuffix    = ".endpoint"
-	ConnTimeoutSuffix = ".conn"
-	NamespaceSuffix   = ".namespace"
-	TimeInMs          = "ms"
-	TimeInSeconds     = "s"
-	FileType          = "properties"
-	LocalConfigName   = "client"
-	JwtSecretKey      = "jwt_secret"
-)
-
-const (
 	ReadConfigErrorLog      = "error in reading server properties file config client: %v ,Error: %v"
 	StringToIntParsingError = "error parsing %s for client: %v ,Error: %v, using defaults"
 	DynConfigParsingError   = "error fetching %s aws config for client: %v ,Error: %v"
 )
 
 // nolint:gocognit //cannot be reduced further
-func GetClientConfigs(client string, cnf *CommonConfig) ClientConfig {
+func GetClientConfigs(client string, cnf *Config) ClientConfig {
 	// Reading from server properties files
 	if cnf.DynamicConfig == nil {
 		v := viper.New()
@@ -188,30 +320,12 @@ func GetClientConfigs(client string, cnf *CommonConfig) ClientConfig {
 	return ClientConfig{Endpoint: endpoint, Timeout: timeout, Conn: conn}
 }
 
-func GetCircuitBreakerClientConfigs(client string, cnf *CommonConfig) CircuitBreakerClientConfig {
+func GetCircuitBreakerClientConfigs(client string, cnf *Config) CircuitBreakerClientConfig {
 	if cnf.DynamicConfig == nil {
 		return readCircuitBreakerConfigFromLocalConfig(client)
 	}
 
 	return readCircuitBreakerConfigFromDynConfig(client, cnf)
-}
-
-func getConfigDirectory() string {
-	var dir string
-
-	env := os.Getenv("ENV")
-	log.Infof("Found Env as %v", env)
-
-	if env != "" {
-		dir = "/data/conf/" + env + "/"
-		log.Infof("Found dir as %v", dir)
-	} else {
-		log.Infof("failed to get build environment, using local configs")
-
-		dir = "./config/local/"
-	}
-
-	return dir
 }
 
 func readCircuitBreakerConfigFromLocalConfig(client string) CircuitBreakerClientConfig {
@@ -273,8 +387,8 @@ func readCircuitBreakerConfigFromLocalConfig(client string) CircuitBreakerClient
 	}
 }
 
-func readCircuitBreakerConfigFromDynConfig(client string, cnf *CommonConfig) CircuitBreakerClientConfig {
-	// Reading from aws App CommonConfig
+func readCircuitBreakerConfigFromDynConfig(client string, cnf *Config) CircuitBreakerClientConfig {
+	// Reading from aws App Config
 	failurePercentageThresholdConfig, err := cnf.DynamicConfig.Get(client + CircuitBreakerFailurePercentageThresholdSuffix)
 	if err != nil {
 		log.Warnf(DynConfigParsingError, "failurePercentageThresholdConfig", client, err)
@@ -344,7 +458,7 @@ func readCircuitBreakerConfigFromDynConfig(client string, cnf *CommonConfig) Cir
 	}
 }
 
-func GetRetryClientConfigs(client string, cnf *CommonConfig) RetryClientConfig {
+func GetRetryClientConfigs(client string, cnf *Config) RetryClientConfig {
 	if cnf.DynamicConfig == nil {
 		return readRetryConfigFromLocalConfig(client)
 	}
@@ -385,8 +499,8 @@ func readRetryConfigFromLocalConfig(client string) RetryClientConfig {
 	}
 }
 
-func readRetryFromDynConfig(client string, cnf *CommonConfig) RetryClientConfig {
-	// Reading from aws App CommonConfig
+func readRetryFromDynConfig(client string, cnf *Config) RetryClientConfig {
+	// Reading from aws App Config
 	maxRetriesConfig, err := cnf.DynamicConfig.Get(client + RetryMaxRetriesSuffix)
 	if err != nil {
 		log.Warnf("error fetching failureThresholdConfig aws config for client: %v ,Error: %v", client, err.Error())
@@ -424,4 +538,67 @@ func join(strs ...string) string {
 	}
 
 	return sb.String()
+}
+
+func setJwtSecretConfig(config *Config) {
+	jwtSecret, err := readJwtSecret(config.Server.JwtSecretLocation)
+	if err != nil {
+		log.Errorf("error reading jwt secret %v", err)
+	}
+
+	if jwtSecret != "" {
+		config.Server.JwtSecret = jwtSecret
+
+		log.Info("successfully retrieved jwt secret")
+	}
+}
+
+func readJwtSecret(location string) (string, error) {
+	var result map[string]interface{}
+
+	byteValue, err := os.ReadFile(location)
+	if err != nil {
+		return "", err
+	}
+
+	err = json.Unmarshal(byteValue, &result)
+	if err != nil {
+		return "", err
+	}
+
+	jwtSecret, ok := result[JwtSecretKey].(string)
+	if !ok {
+		return "", err
+	}
+
+	return jwtSecret, nil
+}
+
+func GetTemporalClientConfig(client, service string, cnf *Config) ClientConfig {
+	if cnf.DynamicConfig == nil {
+		v := viper.New()
+		v.SetConfigType(FileType)
+		v.AddConfigPath(getConfigDirectory())
+		v.SetConfigName(LocalConfigName)
+
+		if err := v.ReadInConfig(); err != nil {
+			log.Errorf(ReadConfigErrorLog, client, err.Error())
+		}
+
+		namespace := v.GetString(join(client, ".", service, NamespaceSuffix))
+
+		return ClientConfig{Endpoint: v.GetString(join(client, EndPointSuffix)), Namespace: namespace}
+	}
+	// Reading from aws App Config
+	namespace, err := cnf.DynamicConfig.Get(fmt.Sprintf("%s%s%s%s", client, ".", service, NamespaceSuffix))
+	if err != nil {
+		log.Errorf("error fetching conn aws config for client: %v ,Error: %v", client, err.Error())
+	}
+
+	endpoint, err := cnf.DynamicConfig.Get(client + EndPointSuffix)
+	if err != nil {
+		log.Errorf("error fetching endpoint aws config for client: %v ,Error: %v", client, err.Error())
+	}
+
+	return ClientConfig{Endpoint: endpoint, Namespace: namespace}
 }

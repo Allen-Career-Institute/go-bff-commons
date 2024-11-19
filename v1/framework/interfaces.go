@@ -3,7 +3,7 @@ package framework
 import (
 	"github.com/Allen-Career-Institute/go-bff-commons/v1/config"
 	framework "github.com/Allen-Career-Institute/go-bff-commons/v1/framework/datasource"
-	commonmodels "github.com/Allen-Career-Institute/go-bff-commons/v1/framework/models"
+	commonmodels "github.com/Allen-Career-Institute/go-bff-commons/v1/framework/models/commons"
 
 	"github.com/labstack/echo/v4"
 )

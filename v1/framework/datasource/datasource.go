@@ -5,7 +5,7 @@ import (
 	"github.com/labstack/echo/v4"
 
 	"github.com/Allen-Career-Institute/go-bff-commons/v1/config"
-	"github.com/Allen-Career-Institute/go-bff-commons/v1/framework/models"
+	models "github.com/Allen-Career-Institute/go-bff-commons/v1/framework/models/commons"
 	"github.com/Allen-Career-Institute/go-bff-commons/v1/pkg/utils"
 )
 

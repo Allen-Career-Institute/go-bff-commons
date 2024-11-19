@@ -9,8 +9,8 @@ import (
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/labstack/echo/v4"
 
-	"github.com/Allen-Career-Institute/go-bff-commons/v1/framework/datasource"
 	commonmodels "github.com/Allen-Career-Institute/go-bff-commons/v1/framework/models/commons"
+	"github.com/Allen-Career-Institute/go-bff-commons/v1/intrnl/datasources"
 	"github.com/Allen-Career-Institute/go-bff-commons/v1/pkg/logger"
 )
 
@@ -101,12 +101,12 @@ func AddErrorDataToExcel(c echo.Context, fileName string, data []byte, l logger.
 	_, err := c.Response().Write(data)
 
 	if err != nil {
-		return datasource.PopulateResponse(http.StatusInternalServerError, GenericError, err), nil
+		return datasources.PopulateResponse(http.StatusInternalServerError, GenericError, err), nil
 	}
 
 	if errorResponse != nil {
 		return HandleErrorAndConvertResponse(errorResponse)
 	}
 
-	return datasource.PopulateResponse(http.StatusInternalServerError, GenericError, nil), nil
+	return datasources.PopulateResponse(http.StatusInternalServerError, GenericError, nil), nil
 }

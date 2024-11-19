@@ -1,6 +1,6 @@
 package datasources
 
-import "github.com/Allen-Career-Institute/go-bff-commons/v1/framework/models"
+import models "github.com/Allen-Career-Institute/go-bff-commons/v1/framework/models/commons"
 
 // PopulateResponse , this method should be used to wrap errors or success responses to
 // a generic response which would be propagated to the UI. Status, reason and the actual

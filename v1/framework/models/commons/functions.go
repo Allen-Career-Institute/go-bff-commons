@@ -1,7 +1,7 @@
 package commons
 
 import (
-	"bff-service/internal/models/commons"
+	"github.com/labstack/echo/v4"
 	"math"
 	"regexp"
 	"strconv"
@@ -17,7 +17,7 @@ func roundFloat(val float64, precision uint) float64 {
 }
 
 func GetAmountInr(amount float32) string {
-	ac := accounting.Accounting{Symbol: commons.Rs, Precision: 0}
+	ac := accounting.Accounting{Symbol: Rs, Precision: 0}
 	return ac.FormatMoney(amount)
 }
 
@@ -68,17 +68,17 @@ func ValidateField(field string, fieldType string) bool {
 	nanoIDRegex := `^[0-9a-zA-Z]{21}$`
 
 	switch fieldType {
-	case commons.EmailID:
+	case EmailID:
 		if regexp.MustCompile(emailRegex).MatchString(field) {
 			return true
 		}
 		return false
-	case commons.PhoneNumber:
+	case PhoneNumber:
 		if regexp.MustCompile(phoneRegex).MatchString(field) {
 			return true
 		}
 		return false
-	case commons.ID:
+	case ID:
 		if regexp.MustCompile(nanoIDRegex).MatchString(field) {
 			return true
 		}
@@ -99,18 +99,18 @@ func RemoveEmptyStrings(slice []string) []string {
 }
 
 func GetBatchID(e echo.Context) string {
-	batchIDStr := e.QueryParam(commons.BatchIDParam)
+	batchIDStr := e.QueryParam(BatchIDParam)
 	batchIDs := RemoveEmptyStrings(strings.Split(batchIDStr, ","))
 
 	if len(batchIDs) > 0 {
 		return batchIDs[0]
 	}
 
-	return commons.EmptyStr
+	return EmptyStr
 }
 
 func GetSelectedBatchIds(e echo.Context) []string {
-	batchIds := e.QueryParam(commons.SelectedBatchList)
+	batchIds := e.QueryParam(SelectedBatchList)
 	if batchIds == "" {
 		return []string{}
 	}

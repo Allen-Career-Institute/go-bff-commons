@@ -6,6 +6,7 @@ import (
 
 	"github.com/Allen-Career-Institute/go-bff-commons/v1/config"
 	"github.com/Allen-Career-Institute/go-bff-commons/v1/framework/models"
+	internalModels "github.com/Allen-Career-Institute/go-bff-commons/v1/intrnl/models/commons"
 	"github.com/Allen-Career-Institute/go-bff-commons/v1/pkg/utils"
 )
 
@@ -26,7 +27,7 @@ type (
 	Filter func(ctx echo.Context) error
 
 	// HandlerFunc defines a function to serve HTTP requests.
-	HandlerFunc func(ctx echo.Context, cnf *config.Config) (models.DSResponse, error)
+	HandlerFunc func(ctx echo.Context, cnf *config.Config) (internalModels.DSResponse, error)
 )
 
 func CreateNewDataSource(dsConf *models.DataSourceConfig, handler HandlerFunc, m ...Filter) (ds *DataSource) {
@@ -100,7 +101,7 @@ func (dsm *DataSource) Action() types.Action {
 	return dsm.action
 }
 
-func (dsm *DataSource) ExecuteHandler(c echo.Context, cnf *config.Config) (models.DSResponse, error) {
+func (dsm *DataSource) ExecuteHandler(c echo.Context, cnf *config.Config) (internalModels.DSResponse, error) {
 	return dsm.handler(c, cnf)
 }
 

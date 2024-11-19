@@ -37,3 +37,13 @@ func TestRemoveEmptyStrings(t *testing.T) {
 		})
 	}
 }
+
+func RemoveEmptyStrings(slice []string) []string {
+	var result []string
+	for _, str := range slice {
+		if str != "" {
+			result = append(result, str)
+		}
+	}
+	return result
+}

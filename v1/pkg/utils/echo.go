@@ -1,9 +1,9 @@
 package utils
 
 import (
-	echo "github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4"
 
-	"bff-service/pkg/logger"
+	"github.com/Allen-Career-Institute/go-bff-commons/v1/pkg/logger"
 )
 
 type EchoUtil struct {

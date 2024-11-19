@@ -1,4 +1,4 @@
-package intrnl
+package datasources
 
 import frameworkModels "github.com/Allen-Career-Institute/go-bff-commons/v1/framework/models/commons"
 

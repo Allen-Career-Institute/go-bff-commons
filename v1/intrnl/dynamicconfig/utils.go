@@ -1,8 +1,8 @@
 package dynamicconfig
 
 import (
-	"bff-service/pkg/logger"
-	"bff-service/pkg/utils"
+	"github.com/Allen-Career-Institute/go-bff-commons/v1/pkg/logger"
+	"github.com/Allen-Career-Institute/go-bff-commons/v1/pkg/utils"
 
 	dc "github.com/Allen-Career-Institute/go-kratos-commons/dynamicconfig/v1"
 	"github.com/labstack/echo/v4"

@@ -6,4 +6,5 @@ import (
 
 type Handlers interface {
 	GetPage() ds.HandlerFunc
+	ResolveLmmWidget() ds.HandlerFunc
 }

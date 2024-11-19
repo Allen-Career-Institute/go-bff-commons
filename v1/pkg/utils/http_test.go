@@ -2,11 +2,11 @@
 package utils
 
 import (
-	"bff-service/config"
-	"bff-service/pkg/logger"
 	"bytes"
 	"context"
 	"errors"
+	"github.com/Allen-Career-Institute/go-bff-commons/v1/config"
+	"github.com/Allen-Career-Institute/go-bff-commons/v1/pkg/logger"
 	"net/http"
 	"net/http/httptest"
 	"reflect"

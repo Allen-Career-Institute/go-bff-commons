@@ -3,7 +3,7 @@ package framework
 import (
 	"github.com/Allen-Career-Institute/go-bff-commons/v1/config"
 	framework "github.com/Allen-Career-Institute/go-bff-commons/v1/framework/datasource"
-	commonmodels "github.com/Allen-Career-Institute/go-bff-commons/v1/framework/models"
+	frameworkModels "github.com/Allen-Career-Institute/go-bff-commons/v1/framework/models/commons"
 	"github.com/Allen-Career-Institute/go-bff-commons/v1/pkg/logger"
 	"github.com/Allen-Career-Institute/go-bff-commons/v1/pkg/utils"
 
@@ -45,12 +45,12 @@ func (dm *DataSourceMappings) GetDataSourcesByNameMap() map[string]*framework.Da
 	return dm.nameToDS
 }
 
-func (dm *DataSourceMappings) GetSharedDS(c echo.Context, dsName string, cnf *config.Config) *commonmodels.DSResponse {
+func (dm *DataSourceMappings) GetSharedDS(c echo.Context, dsName string, cnf *config.Config) *frameworkModels.DSResponse {
 	dm.logger.WithContext(c).Infof("fetching %v data from shared data", dsName)
 
-	var data *commonmodels.DSResponse
+	var data *frameworkModels.DSResponse
 
-	sharedData, ok := c.Get(utils.SharedDataSource).(map[string]*commonmodels.DSResponse)
+	sharedData, ok := c.Get(utils.SharedDataSource).(map[string]*frameworkModels.DSResponse)
 	dm.logger.WithContext(c).Debugf("CONTEXT_in_datasourcemappings %+v", c)
 
 	if c.Get(utils.SharedDataSource) != nil && !ok {
@@ -68,7 +68,7 @@ func (dm *DataSourceMappings) GetSharedDS(c echo.Context, dsName string, cnf *co
 			return nil
 		}
 
-		data = &processedData
+		data = (*frameworkModels.DSResponse)(&processedData)
 	}
 
 	return data

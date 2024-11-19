@@ -76,7 +76,7 @@ func TestCreateMetrics(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			meter := otel.GetMeterProvider().Meter("bff-service")
+			meter := otel.GetMeterProvider().Meter("bff-commons")
 			got, err := createMetrics(meter, tt.counters)
 
 			if (err != nil) != tt.wantErr {
@@ -118,7 +118,7 @@ func TestCreateCounter(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			meter := otel.GetMeterProvider().Meter("bff-service")
+			meter := otel.GetMeterProvider().Meter("bff-commons")
 			_, err := createCounter(meter, tt.params)
 			assert.NoError(t, err)
 		})

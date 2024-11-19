@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"bff-service/config"
+	"github.com/Allen-Career-Institute/go-bff-commons/v1/config"
 	"testing"
 
 	v1 "github.com/Allen-Career-Institute/go-kratos-commons/dynamicconfig/v1"

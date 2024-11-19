@@ -38,7 +38,7 @@ func createMetrics(meter metric.Meter, counters []MetricParams) (map[string]inte
 }
 
 func NewCustomMetrics(l logger.Logger) (*CustomMetrics, error) {
-	meter := otel.GetMeterProvider().Meter("bff-service")
+	meter := otel.GetMeterProvider().Meter("bff-commons")
 
 	counters := []MetricParams{
 		{Name: datasourceRequestCount, Desc: datasourceRequestDesc},

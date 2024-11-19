@@ -1,7 +1,10 @@
 package pagehandler
 
 import (
+	"encoding/json"
 	"fmt"
+	calReq "github.com/Allen-Career-Institute/common-protos/cal/v1/request"
+	"github.com/Allen-Career-Institute/common-protos/learning_material/v1/types/enums"
 	ps "github.com/Allen-Career-Institute/common-protos/page_service/v1"
 	pbReq "github.com/Allen-Career-Institute/common-protos/page_service/v1/request"
 	"github.com/Allen-Career-Institute/common-protos/page_service/v1/response"
@@ -12,9 +15,13 @@ import (
 	userRes "github.com/Allen-Career-Institute/common-protos/user_management/v1/response"
 	userTypes "github.com/Allen-Career-Institute/common-protos/user_management/v1/types"
 	"github.com/Allen-Career-Institute/go-bff-commons/v1/framework/grpc"
+	frameworkModels "github.com/Allen-Career-Institute/go-bff-commons/v1/framework/models/commons"
 	"github.com/Allen-Career-Institute/go-bff-commons/v1/intrnl/clients"
+	"github.com/Allen-Career-Institute/go-bff-commons/v1/intrnl/datasources"
 	pageds2 "github.com/Allen-Career-Institute/go-bff-commons/v1/intrnl/datasources/pageds"
-	models "github.com/Allen-Career-Institute/go-bff-commons/v1/intrnl/models/commons"
+	"github.com/Allen-Career-Institute/go-bff-commons/v1/intrnl/models/lmm"
+	internalUtils "github.com/Allen-Career-Institute/go-bff-commons/v1/intrnl/utils"
+	"github.com/Allen-Career-Institute/go-bff-commons/v1/pkg/httpwrapper"
 	"github.com/Allen-Career-Institute/go-bff-commons/v1/pkg/otel"
 	"github.com/labstack/echo/v4"
 	"go.opentelemetry.io/otel/metric"
@@ -86,7 +93,7 @@ func (pdh *pageDataHandler) GetDSList(c echo.Context, dsNames []string) (dsl []*
 // GetPage TODO: Limit the number of widgets to 20 widgets per page,
 // and include multiple pages in resp if no. of widgets is > 20
 func (pdh *pageDataHandler) GetPage() datasource.HandlerFunc {
-	return func(c echo.Context, cnf *config.Config) (models.DSResponse, error) {
+	return func(c echo.Context, cnf *config.Config) (frameworkModels.DSResponse, error) {
 		c, span := otel.Trace(c, "DataSource.GetPage")
 		defer span.End()
 
@@ -117,7 +124,7 @@ func (pdh *pageDataHandler) GetPage() datasource.HandlerFunc {
 		// create page service req
 		pageClient, err := pdh.getPageServiceClient(c, cnf)
 		if err != nil {
-			return models.DSResponse{}, err
+			return frameworkModels.DSResponse{}, err
 		}
 
 		request := getPageRequest(c, gpr)
@@ -231,7 +238,7 @@ func (pdh *pageDataHandler) getStudentsInfo(c echo.Context) (*resRes.GetStudentB
 	return studentBatchDetailsResponse, nil
 }
 
-func (pdh *pageDataHandler) handleListPage(c echo.Context, pInfo *pbTypes.PageInfo) (models.DSResponse, error) {
+func (pdh *pageDataHandler) handleListPage(c echo.Context, pInfo *pbTypes.PageInfo) (frameworkModels.DSResponse, error) {
 	pageResp, err := pdh.processPageDetailsAndWidgetData(c, pInfo)
 	if err != nil {
 		pdh.logger.WithContext(c).Errorf("Error while processing page details and widget data, err: %v", err)
@@ -240,7 +247,7 @@ func (pdh *pageDataHandler) handleListPage(c echo.Context, pInfo *pbTypes.PageIn
 	return intrnl.PopulateResponse(http.StatusOK, http.StatusText(http.StatusOK), pageResp), nil
 }
 
-func (pdh *pageDataHandler) handleTabPage(c echo.Context, pInfo *pbTypes.PageInfo) (models.DSResponse, error) {
+func (pdh *pageDataHandler) handleTabPage(c echo.Context, pInfo *pbTypes.PageInfo) (frameworkModels.DSResponse, error) {
 	pageResp, err := pdh.processPageDetailsAndWidgetData(c, pInfo)
 	if err != nil {
 		pdh.logger.WithContext(c).Errorf("Error while processing page details and widget data, err: %v", err)
@@ -565,4 +572,89 @@ func ConvertDateRange(input string) string {
 	} else {
 		return input
 	}
+}
+
+func (pdh *pageDataHandler) ResolveLmmWidget() datasource.HandlerFunc {
+	return func(ctx echo.Context, cnf *config.Config) (frameworkModels.DSResponse, error) {
+
+		widgetData, ok := internalUtils.GetValueFromContext[*page.WidgetData](ctx, utils.WidgetData)
+		if ok && widgetData != nil {
+			lmmWidgetData, err := fetchAndUnmarshalWidgetData(widgetData)
+			if err != nil {
+				pdh.logger.WithContext(ctx).Errorf("ResolveLmmWidget: Error in fetchAndUnmarshalWidgetData : %v", err)
+				return frameworkModels.DSResponse{}, err
+			}
+			return pdh.handleContent(ctx, lmmWidgetData.ContentType, lmmWidgetData.ContentID)
+		}
+
+		return datasources.PopulateResponse(http.StatusNotImplemented, "", nil), nil
+	}
+}
+
+func fetchAndUnmarshalWidgetData(widgetData *page.WidgetData) (lmm.LMMContent, error) {
+	var lmmWidgetData lmm.LMMContent
+	marshalledWidgetData, _ := json.Marshal(widgetData.Data)
+	err := json.Unmarshal(marshalledWidgetData, &lmmWidgetData)
+	if err != nil {
+		return lmm.LMMContent{}, err
+	}
+	return lmmWidgetData, nil
+}
+
+func fetchContentData(presignedUrl string) (map[string]interface{}, error) {
+	httpWrapperClient := httpwrapper.NewHTTPWrapper()
+	body, _, err := httpWrapperClient.MakeHttpCall(presignedUrl, "GET", nil, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+	bodyIn := make(map[string]interface{})
+	err = json.Unmarshal(body, &bodyIn)
+	if err != nil {
+		return nil, err
+	}
+	return bodyIn, nil
+}
+
+func (pdh *pageDataHandler) handleContent(ctx echo.Context, contentType string, contentId string) (frameworkModels.DSResponse, error) {
+	if contentType == enums.CategoryType(1).String() {
+		content, err := pdh.cm.GetLearningMaterial(ctx, &pdh.cnf, &calReq.GetLearningMaterialRequest{
+			Id: contentId,
+		})
+		if err != nil {
+			pdh.logger.WithContext(ctx).Errorf("ResolveLMMWidget: Error in GetLearningMaterial : %v", err)
+			return frameworkModels.DSResponse{}, err
+		}
+
+		presignedUrl := content.GetMaterialInfo().GetObjectData().GetObjectUrl()
+		if presignedUrl == utils.EmptyString {
+			pdh.logger.WithContext(ctx).Errorf("Invalid Presigned URL for contentId: %s", contentId)
+			return datasources.PopulateResponse(http.StatusNotImplemented, "", nil), nil
+		}
+
+		bodyIn, err := fetchContentData(presignedUrl)
+		if err != nil {
+			pdh.logger.WithContext(ctx).Errorf("Error while fetching content from presigned url : %v", err)
+			return frameworkModels.DSResponse{}, err
+		}
+		return datasources.PopulateResponse(http.StatusOK, "", bodyIn), nil
+	} else if contentType == enums.CategoryType(2).String() {
+		content, err := pdh.cm.GetNAC(ctx, &pdh.cnf, &calReq.GetNACRequest{
+			Id: contentId,
+		})
+		if err != nil {
+			return frameworkModels.DSResponse{}, err
+		}
+
+		presignedUrl := content.GetNacInfo().GetObjectData().GetObjectUrl()
+		if presignedUrl != utils.EmptyString {
+			bodyIn, err := fetchContentData(presignedUrl)
+			if err != nil {
+				pdh.logger.WithContext(ctx).Errorf("ResolveLLMWidget: Error while fetching content from presigned url for Non Academic Content : %v", err)
+				return frameworkModels.DSResponse{}, err
+			}
+			return datasources.PopulateResponse(http.StatusOK, "", bodyIn), nil
+		}
+
+	}
+	return datasources.PopulateResponse(http.StatusNotFound, "invalid Content Type", nil), nil
 }

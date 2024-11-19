@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	frameworkModels "github.com/Allen-Career-Institute/go-bff-commons/v1/framework/models/commons"
 	"io"
 	"net/http"
 
@@ -9,9 +10,8 @@ import (
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/labstack/echo/v4"
 
-	"bff-service/internal/datasources"
-	commonmodels "bff-service/intrnl/models/commons"
-	"bff-service/pkg/logger"
+	"github.com/Allen-Career-Institute/go-bff-commons/v1/intrnl/datasources"
+	"github.com/Allen-Career-Institute/go-bff-commons/v1/pkg/logger"
 )
 
 func GetDataFromExcel(c echo.Context, l logger.Logger) ([]byte, error) {
@@ -91,7 +91,7 @@ func AddValidationErrorDataToResponse(c echo.Context, sheetName string, data []b
 	return data, nil
 }
 
-func AddErrorDataToExcel(c echo.Context, fileName string, data []byte, l logger.Logger, errorResponse error) (commonmodels.DSResponse, error) {
+func AddErrorDataToExcel(c echo.Context, fileName string, data []byte, l logger.Logger, errorResponse error) (frameworkModels.DSResponse, error) {
 	l.WithContext(c).Info("addErrorDataToExcel call")
 	c.Response().Header().Set(echo.HeaderContentDisposition, "attachment; filename="+fileName)
 	c.Response().Header().Set(echo.HeaderContentType, echo.MIMEOctetStream)

@@ -2,7 +2,7 @@ package utils
 
 import (
 	"fmt"
-	frameworkModels "github.com/Allen-Career-Institute/go-bff-commons/v1/framework/models/commons"
+	commonModels "github.com/Allen-Career-Institute/go-bff-commons/v1/framework/models/commons"
 	"io"
 	"net/http"
 
@@ -91,7 +91,7 @@ func AddValidationErrorDataToResponse(c echo.Context, sheetName string, data []b
 	return data, nil
 }
 
-func AddErrorDataToExcel(c echo.Context, fileName string, data []byte, l logger.Logger, errorResponse error) (frameworkModels.DSResponse, error) {
+func AddErrorDataToExcel(c echo.Context, fileName string, data []byte, l logger.Logger, errorResponse error) (commonModels.DSResponse, error) {
 	l.WithContext(c).Info("addErrorDataToExcel call")
 	c.Response().Header().Set(echo.HeaderContentDisposition, "attachment; filename="+fileName)
 	c.Response().Header().Set(echo.HeaderContentType, echo.MIMEOctetStream)

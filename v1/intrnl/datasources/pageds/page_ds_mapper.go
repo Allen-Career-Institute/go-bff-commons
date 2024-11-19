@@ -3,7 +3,7 @@ package pageds
 import (
 	"fmt"
 	pbTypes "github.com/Allen-Career-Institute/common-protos/page_service/v1/types"
-	frameworkModels "github.com/Allen-Career-Institute/go-bff-commons/v1/framework/models/commons"
+	commonModels "github.com/Allen-Career-Institute/go-bff-commons/v1/framework/models/commons"
 	internal "github.com/Allen-Career-Institute/go-bff-commons/v1/intrnl"
 	pageResp "github.com/Allen-Career-Institute/go-bff-commons/v1/intrnl/models/page"
 	log "github.com/Allen-Career-Institute/go-bff-commons/v1/pkg/logger"
@@ -206,7 +206,7 @@ func (p *ResponseMapper) MapDataSourceRespToLP(
 	c echo.Context,
 	ds, wt, widgetID string,
 	lpr *pageResp.CommonPageResponse,
-	wd *frameworkModels.DSResponse,
+	wd *commonModels.DSResponse,
 	resolvedWidgetsMap map[string]bool,
 ) (*pageResp.CommonPageResponse, error) {
 	switch wt {
@@ -236,7 +236,7 @@ func (p *ResponseMapper) populateAndFilterDynamicWidgets(
 	c echo.Context,
 	widgets []*pageResp.WidgetData,
 	dsName, widgetID string,
-	dataSourceResp *frameworkModels.DSResponse,
+	dataSourceResp *commonModels.DSResponse,
 	resolvedWidgetsMap map[string]bool,
 ) []*pageResp.WidgetData {
 	// slice to store valid widgets that will be returned to frontend to render

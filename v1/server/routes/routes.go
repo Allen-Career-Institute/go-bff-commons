@@ -5,7 +5,7 @@ import (
 	"github.com/Allen-Career-Institute/go-bff-commons/v1/config"
 	"github.com/Allen-Career-Institute/go-bff-commons/v1/framework"
 	"github.com/Allen-Career-Institute/go-bff-commons/v1/framework/datasource"
-	frameworkModels "github.com/Allen-Career-Institute/go-bff-commons/v1/framework/models/commons"
+	commonModels "github.com/Allen-Career-Institute/go-bff-commons/v1/framework/models/commons"
 	internal "github.com/Allen-Career-Institute/go-bff-commons/v1/intrnl"
 	apiMiddlewares "github.com/Allen-Career-Institute/go-bff-commons/v1/intrnl/middleware"
 	"github.com/Allen-Career-Institute/go-bff-commons/v1/pkg/httperr"
@@ -131,7 +131,7 @@ func (e *DataSourceExecutor) ExecuteDataSource(c echo.Context) error {
 	return c.JSON(response.Status, response)
 }
 
-func (e *DataSourceExecutor) ExecuteDataSourceFromDS(c echo.Context) (*frameworkModels.DSResponse, error) {
+func (e *DataSourceExecutor) ExecuteDataSourceFromDS(c echo.Context) (*commonModels.DSResponse, error) {
 	e.logger.WithContext(c).Debugf("Executing Filter for datasource from DS %s", e.ds.Name())
 
 	startTime := time.Now()
@@ -174,7 +174,7 @@ func (e *DataSourceExecutor) ExecuteDataSourceFromDS(c echo.Context) (*framework
 	requestCount.Add(c.Request().Context(), 1, getAddMetricTags(response.Status, e.dsName)...)
 	reqDuration.Record(c.Request().Context(), time.Since(startTime).Milliseconds(), getRecordMetricTags(response.Status, e.dsName)...)
 
-	return (*frameworkModels.DSResponse)(&response), nil
+	return (*commonModels.DSResponse)(&response), nil
 }
 
 func getAddMetricTags(status int, dsName string) []metric.AddOption {

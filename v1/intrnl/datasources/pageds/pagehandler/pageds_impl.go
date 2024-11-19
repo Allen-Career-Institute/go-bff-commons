@@ -15,7 +15,7 @@ import (
 	userRes "github.com/Allen-Career-Institute/common-protos/user_management/v1/response"
 	userTypes "github.com/Allen-Career-Institute/common-protos/user_management/v1/types"
 	"github.com/Allen-Career-Institute/go-bff-commons/v1/framework/grpc"
-	frameworkModels "github.com/Allen-Career-Institute/go-bff-commons/v1/framework/models/commons"
+	commonModels "github.com/Allen-Career-Institute/go-bff-commons/v1/framework/models/commons"
 	"github.com/Allen-Career-Institute/go-bff-commons/v1/intrnl/clients"
 	"github.com/Allen-Career-Institute/go-bff-commons/v1/intrnl/datasources"
 	pageds2 "github.com/Allen-Career-Institute/go-bff-commons/v1/intrnl/datasources/pageds"
@@ -93,7 +93,7 @@ func (pdh *pageDataHandler) GetDSList(c echo.Context, dsNames []string) (dsl []*
 // GetPage TODO: Limit the number of widgets to 20 widgets per page,
 // and include multiple pages in resp if no. of widgets is > 20
 func (pdh *pageDataHandler) GetPage() datasource.HandlerFunc {
-	return func(c echo.Context, cnf *config.Config) (frameworkModels.DSResponse, error) {
+	return func(c echo.Context, cnf *config.Config) (commonModels.DSResponse, error) {
 		c, span := otel.Trace(c, "DataSource.GetPage")
 		defer span.End()
 
@@ -124,7 +124,7 @@ func (pdh *pageDataHandler) GetPage() datasource.HandlerFunc {
 		// create page service req
 		pageClient, err := pdh.getPageServiceClient(c, cnf)
 		if err != nil {
-			return frameworkModels.DSResponse{}, err
+			return commonModels.DSResponse{}, err
 		}
 
 		request := getPageRequest(c, gpr)
@@ -238,7 +238,7 @@ func (pdh *pageDataHandler) getStudentsInfo(c echo.Context) (*resRes.GetStudentB
 	return studentBatchDetailsResponse, nil
 }
 
-func (pdh *pageDataHandler) handleListPage(c echo.Context, pInfo *pbTypes.PageInfo) (frameworkModels.DSResponse, error) {
+func (pdh *pageDataHandler) handleListPage(c echo.Context, pInfo *pbTypes.PageInfo) (commonModels.DSResponse, error) {
 	pageResp, err := pdh.processPageDetailsAndWidgetData(c, pInfo)
 	if err != nil {
 		pdh.logger.WithContext(c).Errorf("Error while processing page details and widget data, err: %v", err)
@@ -247,7 +247,7 @@ func (pdh *pageDataHandler) handleListPage(c echo.Context, pInfo *pbTypes.PageIn
 	return intrnl.PopulateResponse(http.StatusOK, http.StatusText(http.StatusOK), pageResp), nil
 }
 
-func (pdh *pageDataHandler) handleTabPage(c echo.Context, pInfo *pbTypes.PageInfo) (frameworkModels.DSResponse, error) {
+func (pdh *pageDataHandler) handleTabPage(c echo.Context, pInfo *pbTypes.PageInfo) (commonModels.DSResponse, error) {
 	pageResp, err := pdh.processPageDetailsAndWidgetData(c, pInfo)
 	if err != nil {
 		pdh.logger.WithContext(c).Errorf("Error while processing page details and widget data, err: %v", err)
@@ -575,14 +575,14 @@ func ConvertDateRange(input string) string {
 }
 
 func (pdh *pageDataHandler) ResolveLmmWidget() datasource.HandlerFunc {
-	return func(ctx echo.Context, cnf *config.Config) (frameworkModels.DSResponse, error) {
+	return func(ctx echo.Context, cnf *config.Config) (commonModels.DSResponse, error) {
 
 		widgetData, ok := internalUtils.GetValueFromContext[*page.WidgetData](ctx, utils.WidgetData)
 		if ok && widgetData != nil {
 			lmmWidgetData, err := fetchAndUnmarshalWidgetData(widgetData)
 			if err != nil {
 				pdh.logger.WithContext(ctx).Errorf("ResolveLmmWidget: Error in fetchAndUnmarshalWidgetData : %v", err)
-				return frameworkModels.DSResponse{}, err
+				return commonModels.DSResponse{}, err
 			}
 			return pdh.handleContent(ctx, lmmWidgetData.ContentType, lmmWidgetData.ContentID)
 		}
@@ -615,14 +615,14 @@ func fetchContentData(presignedUrl string) (map[string]interface{}, error) {
 	return bodyIn, nil
 }
 
-func (pdh *pageDataHandler) handleContent(ctx echo.Context, contentType string, contentId string) (frameworkModels.DSResponse, error) {
+func (pdh *pageDataHandler) handleContent(ctx echo.Context, contentType string, contentId string) (commonModels.DSResponse, error) {
 	if contentType == enums.CategoryType(1).String() {
 		content, err := pdh.cm.GetLearningMaterial(ctx, &pdh.cnf, &calReq.GetLearningMaterialRequest{
 			Id: contentId,
 		})
 		if err != nil {
 			pdh.logger.WithContext(ctx).Errorf("ResolveLMMWidget: Error in GetLearningMaterial : %v", err)
-			return frameworkModels.DSResponse{}, err
+			return commonModels.DSResponse{}, err
 		}
 
 		presignedUrl := content.GetMaterialInfo().GetObjectData().GetObjectUrl()
@@ -634,7 +634,7 @@ func (pdh *pageDataHandler) handleContent(ctx echo.Context, contentType string, 
 		bodyIn, err := fetchContentData(presignedUrl)
 		if err != nil {
 			pdh.logger.WithContext(ctx).Errorf("Error while fetching content from presigned url : %v", err)
-			return frameworkModels.DSResponse{}, err
+			return commonModels.DSResponse{}, err
 		}
 		return datasources.PopulateResponse(http.StatusOK, "", bodyIn), nil
 	} else if contentType == enums.CategoryType(2).String() {
@@ -642,7 +642,7 @@ func (pdh *pageDataHandler) handleContent(ctx echo.Context, contentType string, 
 			Id: contentId,
 		})
 		if err != nil {
-			return frameworkModels.DSResponse{}, err
+			return commonModels.DSResponse{}, err
 		}
 
 		presignedUrl := content.GetNacInfo().GetObjectData().GetObjectUrl()
@@ -650,7 +650,7 @@ func (pdh *pageDataHandler) handleContent(ctx echo.Context, contentType string, 
 			bodyIn, err := fetchContentData(presignedUrl)
 			if err != nil {
 				pdh.logger.WithContext(ctx).Errorf("ResolveLLMWidget: Error while fetching content from presigned url for Non Academic Content : %v", err)
-				return frameworkModels.DSResponse{}, err
+				return commonModels.DSResponse{}, err
 			}
 			return datasources.PopulateResponse(http.StatusOK, "", bodyIn), nil
 		}

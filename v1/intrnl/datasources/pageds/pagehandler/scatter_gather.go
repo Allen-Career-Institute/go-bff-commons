@@ -3,7 +3,7 @@ package pagehandler
 import (
 	pbTypes "github.com/Allen-Career-Institute/common-protos/page_service/v1/types"
 	"github.com/Allen-Career-Institute/go-bff-commons/v1/framework/datasource"
-	frameworkModels "github.com/Allen-Career-Institute/go-bff-commons/v1/framework/models/commons"
+	commonModels "github.com/Allen-Career-Institute/go-bff-commons/v1/framework/models/commons"
 	"github.com/Allen-Career-Institute/go-bff-commons/v1/intrnl/models/page"
 	internalUtils "github.com/Allen-Career-Institute/go-bff-commons/v1/intrnl/utils"
 	"github.com/Allen-Career-Institute/go-bff-commons/v1/pkg/otel"
@@ -31,7 +31,7 @@ func (pdh *pageDataHandler) processDataSources(c echo.Context, pageResp *page.Co
 
 	//TODO: optimise number of go-routines (check if we can use global pool of go-routines)
 	tc := utils.GetMin(len(existingDataSources), pdh.cnf.GoPool.MaxConcurrentRoutines)
-	dsResults := make([]*frameworkModels.DSResponse, tc)
+	dsResults := make([]*commonModels.DSResponse, tc)
 
 	//pdh.logger.Infof("Echo Addr in processDataSources : %s", reflect.ValueOf(c).Pointer())
 	// Mind the "loop variable capture" problem
@@ -102,9 +102,9 @@ func (pdh *pageDataHandler) processPreloadDataSources(c *echo.Context, preloadDS
 	pdh.logger.WithContext(*c).Info("processing preload datasources...")
 	ec := *c
 	dependentDSList := pdh.GetDSList(*c, preloadDS)
-	dsData := make(map[string]*frameworkModels.DSResponse)
+	dsData := make(map[string]*commonModels.DSResponse)
 
-	existingDSMap, ok := ec.Get(utils.SharedDataSource).(map[string]*frameworkModels.DSResponse)
+	existingDSMap, ok := ec.Get(utils.SharedDataSource).(map[string]*commonModels.DSResponse)
 	if existingDSMap != nil && ok {
 		dsData = existingDSMap
 	}
@@ -137,7 +137,7 @@ func (pdh *pageDataHandler) processPreloadDataSources(c *echo.Context, preloadDS
 	pdh.logger.WithContext(*c).Debugf("CONTEXT %+v", ec)
 }
 
-func (pdh *pageDataHandler) worker(c echo.Context, taskID uint32, ds *datasource.DataSource) *frameworkModels.DSResponse {
+func (pdh *pageDataHandler) worker(c echo.Context, taskID uint32, ds *datasource.DataSource) *commonModels.DSResponse {
 	c, span := otel.Trace(c, ds.Name())
 	defer span.End()
 

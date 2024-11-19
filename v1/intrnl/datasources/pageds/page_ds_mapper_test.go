@@ -4,7 +4,7 @@ import (
 	"errors"
 	pbTypes "github.com/Allen-Career-Institute/common-protos/page_service/v1/types"
 	"github.com/Allen-Career-Institute/go-bff-commons/v1/config"
-	frameworkModels "github.com/Allen-Career-Institute/go-bff-commons/v1/framework/models/commons"
+	commonModels "github.com/Allen-Career-Institute/go-bff-commons/v1/framework/models/commons"
 	pageResp "github.com/Allen-Career-Institute/go-bff-commons/v1/intrnl/models/page"
 	"github.com/Allen-Career-Institute/go-bff-commons/v1/pkg/logger"
 	constants "github.com/Allen-Career-Institute/go-bff-commons/v1/pkg/utils"
@@ -363,7 +363,7 @@ func TestMapDataSourceRespToLP(t *testing.T) {
 			// Prepare other input parameters
 			ds := "data-source"
 			widgetId := "1"
-			wd := &frameworkModels.DSResponse{}
+			wd := &commonModels.DSResponse{}
 			resolvedWidgetsMap := make(map[string]bool)
 
 			req := httptest.NewRequest(http.MethodPatch, "/", nil)

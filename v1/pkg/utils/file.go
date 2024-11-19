@@ -10,7 +10,7 @@ import (
 	"github.com/labstack/echo/v4"
 
 	"github.com/Allen-Career-Institute/go-bff-commons/v1/framework/datasource"
-	commonmodels "github.com/Allen-Career-Institute/go-bff-commons/v1/framework/models"
+	commonmodels "github.com/Allen-Career-Institute/go-bff-commons/v1/framework/models/commons"
 	"github.com/Allen-Career-Institute/go-bff-commons/v1/pkg/logger"
 )
 

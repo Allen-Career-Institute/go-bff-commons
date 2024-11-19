@@ -19,9 +19,9 @@ import (
 	semconv "go.opentelemetry.io/otel/semconv/v1.17.0"
 	spanTrace "go.opentelemetry.io/otel/trace"
 
-	"bff-service/config"
-	"bff-service/pkg/logger"
-	"bff-service/pkg/utils"
+	"github.com/Allen-Career-Institute/go-bff-commons/v1/config"
+	"github.com/Allen-Career-Institute/go-bff-commons/v1/pkg/logger"
+	"github.com/Allen-Career-Institute/go-bff-commons/v1/pkg/utils"
 )
 
 type Handler struct {

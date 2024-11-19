@@ -2,8 +2,8 @@
 package utils
 
 import (
-	"bff-service/config"
 	"fmt"
+	"github.com/Allen-Career-Institute/go-bff-commons/v1/config"
 	"sort"
 	"strconv"
 	"strings"

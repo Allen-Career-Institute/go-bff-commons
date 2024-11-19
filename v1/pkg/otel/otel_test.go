@@ -2,10 +2,11 @@
 package otel
 
 import (
-	"bff-service/config"
-	"bff-service/pkg/logger"
-	"bff-service/pkg/utils"
 	"errors"
+	"github.com/Allen-Career-Institute/go-bff-commons/v1/config"
+	"github.com/Allen-Career-Institute/go-bff-commons/v1/framework"
+	"github.com/Allen-Career-Institute/go-bff-commons/v1/pkg/logger"
+	"github.com/Allen-Career-Institute/go-bff-commons/v1/pkg/utils"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -100,7 +101,7 @@ func TestInitOtelProviders(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockDynamicConfig := NewMockDynamicConfig(ctrl)
+	mockDynamicConfig := framework.NewMockDynamicConfig(ctrl)
 
 	tests := []struct {
 		name        string

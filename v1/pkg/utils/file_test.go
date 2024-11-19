@@ -2,9 +2,9 @@
 package utils
 
 import (
-	"bff-service/config"
-	"bff-service/pkg/logger"
 	"errors"
+	"github.com/Allen-Career-Institute/go-bff-commons/v1/config"
+	"github.com/Allen-Career-Institute/go-bff-commons/v1/pkg/logger"
 	"io"
 	"mime/multipart"
 	"net/http"

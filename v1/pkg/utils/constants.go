@@ -99,7 +99,7 @@ const (
 )
 
 const (
-	Tracer              = "tracer-bff-service"
+	Tracer              = "tracer-bff-commons-service"
 	SpanTracer          = "bff-span-context"
 	TracerServiceName   = "bff-layer"
 	Tag                 = "tag"

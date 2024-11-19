@@ -13,6 +13,7 @@ import (
 	userTypes "github.com/Allen-Career-Institute/common-protos/user_management/v1/types"
 	"github.com/Allen-Career-Institute/go-bff-commons/v1/framework/grpc"
 	"github.com/Allen-Career-Institute/go-bff-commons/v1/intrnl/clients"
+	pageds2 "github.com/Allen-Career-Institute/go-bff-commons/v1/intrnl/datasources/pageds"
 	models "github.com/Allen-Career-Institute/go-bff-commons/v1/intrnl/models/commons"
 	"github.com/Allen-Career-Institute/go-bff-commons/v1/pkg/otel"
 	"github.com/labstack/echo/v4"
@@ -28,7 +29,6 @@ import (
 	intrnl "github.com/Allen-Career-Institute/go-bff-commons/v1/intrnl"
 	grpcClients "github.com/Allen-Career-Institute/go-bff-commons/v1/intrnl/clients/constants"
 	"github.com/Allen-Career-Institute/go-bff-commons/v1/intrnl/models/page"
-	"github.com/Allen-Career-Institute/go-bff-commons/v1/intrnl/pageds"
 	log "github.com/Allen-Career-Institute/go-bff-commons/v1/pkg/logger"
 
 	"github.com/Allen-Career-Institute/go-bff-commons/v1/pkg/utils"
@@ -38,7 +38,7 @@ type pageDataHandler struct {
 	cnf    config.Config
 	dsm    framework.DatasourceMappingsManager
 	logger log.Logger
-	prm    pageds.ResponseMapper
+	prm    pageds2.ResponseMapper
 	meter  metric.Meter
 	m      intrnl.Mapper
 	eutil  utils.EchoUtil
@@ -46,12 +46,12 @@ type pageDataHandler struct {
 	grpc   grpc.Manager
 }
 
-func NewPageDataHandler(cfg *config.Config, dsm framework.DatasourceMappingsManager, logger *log.Logger, meter metric.Meter, m intrnl.Mapper, grpc grpc.Manager) pageds.Handlers {
+func NewPageDataHandler(cfg *config.Config, dsm framework.DatasourceMappingsManager, logger *log.Logger, meter metric.Meter, m intrnl.Mapper, grpc grpc.Manager) pageds2.Handlers {
 	return &pageDataHandler{
 		cnf:    *cfg,
 		dsm:    dsm,
 		logger: *logger,
-		prm:    *pageds.NewResponseMapper(logger),
+		prm:    *pageds2.NewResponseMapper(logger),
 		meter:  meter,
 		m:      m,
 		eutil:  utils.NewEchoUtil(*logger),

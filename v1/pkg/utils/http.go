@@ -2,14 +2,14 @@ package utils
 
 import (
 	"context"
-	"github.com/Allen-Career-Institute/go-bff-commons/v1/framework/models"
+	models "github.com/Allen-Career-Institute/go-bff-commons/v1/framework/models/commons"
 	"github.com/Allen-Career-Institute/go-bff-commons/v1/intrnl/datasources"
 	"net/http"
 	"strings"
 	"time"
 
 	"github.com/go-playground/validator/v10"
-	echo "github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"

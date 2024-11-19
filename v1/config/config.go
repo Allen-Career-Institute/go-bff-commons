@@ -3,7 +3,7 @@ package config
 import (
 	"encoding/json"
 	"fmt"
-	commonmodels "github.com/Allen-Career-Institute/go-bff-commons/v1/intrnl/commons"
+	commonmodels "github.com/Allen-Career-Institute/go-bff-commons/v1/framework/models/commons"
 	dc "github.com/Allen-Career-Institute/go-kratos-commons/dynamicconfig/v1"
 	"github.com/labstack/gommon/log"
 	"github.com/spf13/viper"

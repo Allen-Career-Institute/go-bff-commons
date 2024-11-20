@@ -68,7 +68,7 @@ func (dm *DataSourceMappings) GetSharedDS(c echo.Context, dsName string, cnf *co
 			return nil
 		}
 
-		data = (*commonModels.DSResponse)(&processedData)
+		data = &processedData
 	}
 
 	return data

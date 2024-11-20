@@ -6,5 +6,6 @@ import (
 
 type Handlers interface {
 	GetPage() ds.HandlerFunc
+	GetPageWithRouting() ds.HandlerFunc
 	ResolveLmmWidget() ds.HandlerFunc
 }

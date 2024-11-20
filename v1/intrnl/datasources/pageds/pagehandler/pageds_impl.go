@@ -160,6 +160,76 @@ func (pdh *pageDataHandler) GetPage() datasource.HandlerFunc {
 	}
 }
 
+// GetPageWithRouting TODO: this is temp function, will be removed once routing is implemented at kong level
+// and include multiple pages in resp if no. of widgets is > 20
+func (pdh *pageDataHandler) GetPageWithRouting() datasource.HandlerFunc {
+	return func(c echo.Context, cnf *config.Config) (commonModels.DSResponse, error) {
+		c, span := otel.Trace(c, "DataSource.GetPage")
+		defer span.End()
+
+		userDetails, err := pdh.cm.GetUser(c, cnf, pdh.grpc)
+		if err != nil {
+			pdh.logger.WithContext(c).Errorf("error while fetching user details, err: %v", err.Error())
+		}
+		userContext := map[string]string{"onboarded": "false", "enrolled": "false", "stream": "", "class": ""}
+		if userDetails != nil {
+			pdh.populateUserRelatedContext(c, userDetails, userContext)
+		}
+		pdh.populateAppVersionRelatedContext(c, userContext)
+		pdh.populateCourseModuleRelatedContext(c, userContext)
+
+		pdh.logger.WithContext(c).Infof("Fetching Page Data..")
+		gpr := &page.GetPageRequest{UserContext: userContext}
+		// validate request
+		// TODO: add validations in request
+		if err = utils.ReadRequest(c, gpr); err != nil {
+			pdh.logger.WithContext(c).Errorf("Error while parsing request, err: %v", err)
+			return intrnl.PopulateResponse(http.StatusBadRequest, http.StatusText(http.StatusBadRequest), err.Error()), err
+		}
+		// setting pageURL in context, so that it can be used in datasource (redirection use case)
+		c.Set(utils.PageURL, gpr.PageURL)
+
+		pdh.handleQueryParams(c, gpr.PageURL, userContext)
+
+		// create page service req
+		pageClient, err := pdh.getPageServiceClient(c, cnf)
+		if err != nil {
+			return commonModels.DSResponse{}, err
+		}
+
+		request := getPageRequest(c, gpr)
+		conf := config.GetClientConfigs(grpcClients.PageServiceClient, cnf)
+		apiCtx, apiCancel := utils.GetRequestCtxWithTimeout(c, conf.Timeout)
+		defer apiCancel()
+
+		gpResp, err := pageClient.GetPageFromCache(apiCtx, request)
+		if err != nil {
+			pdh.logger.WithContext(c).Errorf("Error while fetching page from page service, URL: %s, err: %v", gpr.PageURL, err)
+			code, msg := utils.HandleError(c, err, pdh.logger)
+			if code >= http.StatusInternalServerError && code < http.StatusNetworkAuthenticationRequired {
+				msg = "Error while fetching page from page service, URL: " + gpr.PageURL
+				return intrnl.PopulateResponse(code, UserFacingMessage(code), msg), nil
+			} else {
+				return intrnl.PopulateResponse(code, UserFacingMessage(code), msg), nil
+			}
+
+		}
+
+		setUrlMetaInContext(c, gpResp)
+		pInfo := gpResp.PageInfo
+
+		switch pInfo.PageMeta.PageType {
+		case pbTypes.PageMeta_LIST:
+			return pdh.handleListPage(c, pInfo)
+		case pbTypes.PageMeta_TAB:
+			return pdh.handleTabPage(c, pInfo)
+		default:
+			pdh.logger.WithContext(c).Errorf("unsupported pageType received in pageInfo for URL: %s", gpr.PageURL)
+			return intrnl.PopulateResponse(http.StatusInternalServerError, utils.GenericError, ErrorUnsupportedPageType.Error()), err
+		}
+	}
+}
+
 func setUrlMetaInContext(c echo.Context, resp *response.GetPageReply) {
 	urlMeta := resp.PageInfo.UrlMeta
 	if urlMeta != nil {

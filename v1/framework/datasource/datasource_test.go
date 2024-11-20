@@ -7,7 +7,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/Allen-Career-Institute/go-bff-commons/v1/config"
+	commonModels "github.com/Allen-Career-Institute/go-bff-commons/v1/framework/models/commons"
 )
 
 const (
@@ -18,7 +18,7 @@ const (
 )
 
 func TestCreateNewDataSource_Success(t *testing.T) {
-	dsConf := &config.DataSourceConfig{URI: uri, Timeout: timeout, Method: method, DsName: dsName}
+	dsConf := &commonModels.DataSourceConfig{URI: uri, Timeout: timeout, Method: method, DsName: dsName}
 	ds := CreateNewDataSource(dsConf, nil, DummyFilter(), DummyFilter())
 	assert.NotNil(t, ds)
 }
@@ -64,6 +64,6 @@ func DummyFilter() Filter {
 	}
 }
 
-func getDataSourceConfig() config.DataSourceConfig {
-	return config.DataSourceConfig{URI: uri, Timeout: timeout, Method: method, DsName: dsName}
+func getDataSourceConfig() commonModels.DataSourceConfig {
+	return commonModels.DataSourceConfig{URI: uri, Timeout: timeout, Method: method, DsName: dsName}
 }

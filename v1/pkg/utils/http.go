@@ -2,7 +2,7 @@ package utils
 
 import (
 	"context"
-	models "github.com/Allen-Career-Institute/go-bff-commons/v1/framework/models/commons"
+	commonModels "github.com/Allen-Career-Institute/go-bff-commons/v1/framework/models/commons"
 	"github.com/Allen-Career-Institute/go-bff-commons/v1/intrnl/datasources"
 	"net/http"
 	"strings"
@@ -188,7 +188,7 @@ func GetHeader(ctx echo.Context, name string) string {
 	return EmptyString
 }
 
-func HandleErrorAndConvertResponse(errorResponse error) (models.DSResponse, error) {
+func HandleErrorAndConvertResponse(errorResponse error) (commonModels.DSResponse, error) {
 	e, _ := status.FromError(errorResponse)
 	errMessage := e.Message()
 	respCode := GetHTTPStatusCode(e.Code())

@@ -3,7 +3,7 @@ package config
 import (
 	"encoding/json"
 	"fmt"
-	commonmodels "github.com/Allen-Career-Institute/go-bff-commons/v1/framework/models/commons"
+	commonModels "github.com/Allen-Career-Institute/go-bff-commons/v1/framework/models/commons"
 	dc "github.com/Allen-Career-Institute/go-kratos-commons/dynamicconfig/v1"
 	"github.com/labstack/gommon/log"
 	"github.com/spf13/viper"
@@ -150,7 +150,7 @@ func readAesEncryptionSecrets(location string) (secretKey, encryptionIV string, 
 		return "", "", err
 	}
 
-	var aesEncryptionSecrets commonmodels.AesEncryptionSecrets
+	var aesEncryptionSecrets commonModels.AesEncryptionSecrets
 
 	err = json.Unmarshal(byteValue, &aesEncryptionSecrets)
 	if err != nil {

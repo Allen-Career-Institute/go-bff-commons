@@ -58,6 +58,7 @@ const (
 	SelectedBatchList       = "selected_batch_list"
 	EmptyStr                = ""
 	FtuxPopUpText           = "GENERAL_FTUX_POPUP"
+	DownloadTitle           = "Downloaded content"
 )
 
 const (

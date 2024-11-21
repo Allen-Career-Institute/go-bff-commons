@@ -99,7 +99,7 @@ const (
 )
 
 const (
-	Tracer              = "tracer-bff-commons-service"
+	Tracer              = "tracer-bff-service"
 	SpanTracer          = "bff-span-context"
 	TracerServiceName   = "bff-layer"
 	Tag                 = "tag"
@@ -173,6 +173,8 @@ const (
 	QuestionString  = "?"
 	HyphenString    = "-"
 	ConfigureString = " configured for "
+	TrueString      = "true"
+	FalseString     = "false"
 )
 
 const (
@@ -214,6 +216,7 @@ const (
 	GotErrorLogConstant = "got error: %v"
 	TextPositive        = "text-positive"
 	Success             = "success"
+	Failure             = "failure"
 	Warning             = "warning"
 )
 
@@ -248,6 +251,7 @@ const (
 	IsSender                                                        = "is_sender"
 	ExpandText                                                      = "expand_text"
 	ReportCta                                                       = "report_cta"
+	ReportCtaTag                                                    = "tag"
 	MediaList                                                       = "media_list"
 	TransferredToTeacherDoubtReplyText                              = "Doubt transferred to Teacher"
 	WebPrimaryMessage                                               = "web_primary_message"
